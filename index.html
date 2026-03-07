@@ -441,6 +441,12 @@
         <textarea id="cfg-system-prompt" rows="6" spellcheck="false"></textarea>
       </div>
       <div id="filter-row">
+        <label>model</label>
+        <select id="cfg-gemini-model">
+          <option value="gemini-3-flash-preview">3 flash</option>
+          <option value="gemini-3.1-pro-preview-">3 pro</option>
+          <option value="gemini-2.5-flas">2.5 flash</ophtion>
+        </select>
         <label>section</label>
         <select id="cfg-section">
           <option value="">all</option>
@@ -507,7 +513,7 @@
 // ── Backend URL ────────────────────────────────────────────────────────
 // Replace with your Render URL when deploying:
 // const API = 'https://your-app.onrender.com';
-const API = 'https://profile-rag.onrender.com/';
+const API = window.RAG_API_URL || 'http://localhost:8000';
 
 // Hardcoded system prompt — edit here if needed
 const SYSTEM_PROMPT = `You are Bhagwan Choudary. Answer questions related to your portfolio.
@@ -575,6 +581,7 @@ async function runQuery() {
   const params = new URLSearchParams({
     question,
     top_k:         document.getElementById('cfg-topk').value,
+    gemini_model:  document.getElementById('cfg-gemini-model').value,
     system_prompt: document.getElementById('cfg-system-prompt').value.trim() || SYSTEM_PROMPT,
     ...(document.getElementById('cfg-section').value  && { section_filter:  document.getElementById('cfg-section').value }),
     ...(document.getElementById('cfg-doctype').value  && { doc_type_filter: document.getElementById('cfg-doctype').value }),
