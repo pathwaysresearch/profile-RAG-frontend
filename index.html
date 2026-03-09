@@ -6,6 +6,11 @@
 <title>Portfolio RAG</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- Markdown + LaTeX -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -79,13 +84,57 @@
     border-radius:2px var(--radius) var(--radius) var(--radius);
     padding:12px 16px;
   }
-  .bubble-text { font-family:var(--sans); font-size:14px; line-height:1.75; color:var(--text); white-space:pre-wrap; word-break:break-word; }
+.bubble-text { font-family:var(--sans); font-size:14px; line-height:1.75; color:var(--text); word-break:break-word; }
   .bubble-text .cursor { display:inline-block; width:2px; height:1em; background:var(--amber); animation:blink 0.8s infinite; vertical-align:text-bottom; margin-left:2px; }
   @keyframes blink { 0%,100%{opacity:1;}50%{opacity:0;} }
-  .bubble-meta { display:flex; gap:12px; flex-wrap:wrap; font-size:10px; color:var(--text-dim); margin-top:8px; }
-  .bubble-meta .mi { display:flex; gap:4px; align-items:center; }
-  .bubble-meta .mv { color:var(--text-mid); }
 
+  /* Markdown rendering */
+  .bubble-text p  { margin: 0.5em 0; }
+  .bubble-text p:first-child { margin-top:0; }
+  .bubble-text p:last-child  { margin-bottom:0; }
+  .bubble-text h1,.bubble-text h2,.bubble-text h3,
+  .bubble-text h4,.bubble-text h5,.bubble-text h6 {
+    color:var(--amber); font-family:var(--mono); font-weight:600;
+    margin:1em 0 0.4em; letter-spacing:0.04em;
+  }
+  .bubble-text h1 { font-size:1.2em; }
+  .bubble-text h2 { font-size:1.1em; }
+  .bubble-text h3 { font-size:1em; }
+  .bubble-text ul,.bubble-text ol { padding-left:1.4em; margin:0.5em 0; }
+  .bubble-text li { margin:0.2em 0; }
+  .bubble-text code {
+    background:var(--bg3); border:1px solid var(--border);
+    border-radius:3px; padding:1px 5px;
+    font-family:var(--mono); font-size:0.88em; color:var(--green);
+  }
+  .bubble-text pre {
+    background:var(--bg3); border:1px solid var(--border);
+    border-radius:var(--radius); padding:12px 14px;
+    overflow-x:auto; margin:0.6em 0;
+  }
+  .bubble-text pre code {
+    background:none; border:none; padding:0;
+    font-size:0.85em; color:var(--text);
+  }
+  .bubble-text blockquote {
+    border-left:3px solid var(--amber-dim); margin:0.6em 0;
+    padding:4px 12px; color:var(--text-mid); font-style:italic;
+  }
+  .bubble-text table {
+    border-collapse:collapse; width:100%; margin:0.6em 0; font-size:0.9em;
+  }
+  .bubble-text th,.bubble-text td {
+    border:1px solid var(--border2); padding:6px 10px; text-align:left;
+  }
+  .bubble-text th { background:var(--bg3); color:var(--amber); font-weight:600; }
+  .bubble-text tr:nth-child(even) { background:var(--bg3); }
+  .bubble-text a { color:var(--blue); text-decoration:none; }
+  .bubble-text a:hover { text-decoration:underline; }
+  .bubble-text strong { color:var(--text); font-weight:600; }
+  .bubble-text em { color:var(--text-mid); }
+  .bubble-text hr { border:none; border-top:1px solid var(--border); margin:0.8em 0; }
+  /* KaTeX display math */
+  .bubble-text .katex-display { overflow-x:auto; padding:4px 0; }
   /* Input area */
   #input-bar { display:flex; flex-direction:column; gap:7px; padding:10px 14px; border-top:1px solid var(--border); flex-shrink:0; background:var(--bg2); }
 
@@ -226,10 +275,6 @@
             <option value="claude-sonnet-4-6">Sonnet 4.6</option>
             <option value="claude-opus-4-5">Opus 4.5</option>
           </optgroup>
-          <optgroup label="Gemini">
-            <option value="gemini-3-flash-preview">3 flash</option>
-            <option value="gemini-3.1-pro-preview">3.1 pro</option>
-          </optgroup>
         </select>
         <label>section</label>
         <select id="cfg-section">
@@ -290,7 +335,7 @@
 <div id="toast"></div>
 
 <script>
-const API = 'https://profile-rag.onrender.com';
+const API = 'http://127.0.0.1:8000';
 
 const DEFAULT_SYSTEM_PROMPT = `You are Bhagwan Choudary. Answer questions related to your portfolio.
 Some stuff about you:
@@ -428,13 +473,16 @@ async function sendMessage() {
 
     es.addEventListener('token', e => {
       fullText += JSON.parse(e.data);
-      textEl.innerHTML = escapeHtml(fullText) + '<span class="cursor"></span>';
+      textEl.innerHTML = renderMd(fullText);
+      const cur = document.createElement('span');
+      cur.className = 'cursor';
+      textEl.appendChild(cur);
       scrollThread();
     });
-
     es.addEventListener('done', e => {
       const meta = JSON.parse(e.data);
-      textEl.innerHTML = escapeHtml(fullText);
+      textEl.innerHTML = renderMd(fullText);
+      applyKatex(textEl);
       renderBubbleMeta(document.getElementById('current-meta'), meta);
       textEl.removeAttribute('id');
       document.getElementById('current-meta')?.removeAttribute('id');
@@ -452,7 +500,8 @@ async function sendMessage() {
       const msg = e.data ? JSON.parse(e.data) : 'Stream error';
       toast(msg, 'error');
       log('Error: ' + msg);
-      textEl.innerHTML = escapeHtml(fullText) || '<em style="color:var(--red)">Error</em>';
+      textEl.innerHTML = fullText ? renderMd(fullText) : '<em style="color:var(--red)">Error</em>';
+      if (fullText) applyKatex(textEl);
       textEl.removeAttribute('id');
       setBusy(false);
       es.close();
@@ -541,6 +590,22 @@ function toast(msg, type='info') {
 function log(msg) { document.getElementById('progress-log').textContent = msg; }
 function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function escapeAttr(s) { return String(s||'').replace(/"/g,'&quot;'); }
+
+function renderMd(text) {
+  return marked.parse(text, { breaks: true, gfm: true });
+}
+function applyKatex(el) {
+  if (typeof renderMathInElement === 'function') {
+    renderMathInElement(el, {
+      delimiters: [
+        { left: '$$',  right: '$$',  display: true  },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true  },
+      ],
+      throwOnError: false,
+    });
+  }
+}
 
 document.getElementById('cfg-system-prompt').value = DEFAULT_SYSTEM_PROMPT;
 refreshStats();
