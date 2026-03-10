@@ -5,12 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>Portfolio RAG</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<!-- Markdown + LaTeX -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -84,57 +83,13 @@
     border-radius:2px var(--radius) var(--radius) var(--radius);
     padding:12px 16px;
   }
-.bubble-text { font-family:var(--sans); font-size:14px; line-height:1.75; color:var(--text); word-break:break-word; }
+  .bubble-text { font-family:var(--sans); font-size:14px; line-height:1.75; color:var(--text); white-space:pre-wrap; word-break:break-word; }
   .bubble-text .cursor { display:inline-block; width:2px; height:1em; background:var(--amber); animation:blink 0.8s infinite; vertical-align:text-bottom; margin-left:2px; }
   @keyframes blink { 0%,100%{opacity:1;}50%{opacity:0;} }
+  .bubble-meta { display:flex; gap:12px; flex-wrap:wrap; font-size:10px; color:var(--text-dim); margin-top:8px; }
+  .bubble-meta .mi { display:flex; gap:4px; align-items:center; }
+  .bubble-meta .mv { color:var(--text-mid); }
 
-  /* Markdown rendering */
-  .bubble-text p  { margin: 0.5em 0; }
-  .bubble-text p:first-child { margin-top:0; }
-  .bubble-text p:last-child  { margin-bottom:0; }
-  .bubble-text h1,.bubble-text h2,.bubble-text h3,
-  .bubble-text h4,.bubble-text h5,.bubble-text h6 {
-    color:var(--amber); font-family:var(--mono); font-weight:600;
-    margin:1em 0 0.4em; letter-spacing:0.04em;
-  }
-  .bubble-text h1 { font-size:1.2em; }
-  .bubble-text h2 { font-size:1.1em; }
-  .bubble-text h3 { font-size:1em; }
-  .bubble-text ul,.bubble-text ol { padding-left:1.4em; margin:0.5em 0; }
-  .bubble-text li { margin:0.2em 0; }
-  .bubble-text code {
-    background:var(--bg3); border:1px solid var(--border);
-    border-radius:3px; padding:1px 5px;
-    font-family:var(--mono); font-size:0.88em; color:var(--green);
-  }
-  .bubble-text pre {
-    background:var(--bg3); border:1px solid var(--border);
-    border-radius:var(--radius); padding:12px 14px;
-    overflow-x:auto; margin:0.6em 0;
-  }
-  .bubble-text pre code {
-    background:none; border:none; padding:0;
-    font-size:0.85em; color:var(--text);
-  }
-  .bubble-text blockquote {
-    border-left:3px solid var(--amber-dim); margin:0.6em 0;
-    padding:4px 12px; color:var(--text-mid); font-style:italic;
-  }
-  .bubble-text table {
-    border-collapse:collapse; width:100%; margin:0.6em 0; font-size:0.9em;
-  }
-  .bubble-text th,.bubble-text td {
-    border:1px solid var(--border2); padding:6px 10px; text-align:left;
-  }
-  .bubble-text th { background:var(--bg3); color:var(--amber); font-weight:600; }
-  .bubble-text tr:nth-child(even) { background:var(--bg3); }
-  .bubble-text a { color:var(--blue); text-decoration:none; }
-  .bubble-text a:hover { text-decoration:underline; }
-  .bubble-text strong { color:var(--text); font-weight:600; }
-  .bubble-text em { color:var(--text-mid); }
-  .bubble-text hr { border:none; border-top:1px solid var(--border); margin:0.8em 0; }
-  /* KaTeX display math */
-  .bubble-text .katex-display { overflow-x:auto; padding:4px 0; }
   /* Input area */
   #input-bar { display:flex; flex-direction:column; gap:7px; padding:10px 14px; border-top:1px solid var(--border); flex-shrink:0; background:var(--bg2); }
 
@@ -233,6 +188,10 @@
   .spinner { display:inline-block; width:10px; height:10px; border:2px solid var(--border2); border-top-color:var(--amber); border-radius:50%; animation:spin 0.7s linear infinite; }
   @keyframes spin { to{transform:rotate(360deg);} }
   .hidden { display:none !important; }
+
+  /* KaTeX display math */
+  .bubble-text .katex-display { overflow-x:auto; padding:4px 0; }
+  .latex-error { color:var(--red); font-family:var(--mono); font-size:0.85em; }
 </style>
 </head>
 <body>
@@ -271,7 +230,13 @@
       <div id="filter-row">
         <label>model</label>
         <select id="cfg-model">
+          <optgroup label="Gemini">
+            <option value="gemini-2.0-flash">2.0 flash</option>
+            <option value="gemini-2.5-flash-preview-04-17">2.5 flash</option>
+            <option value="gemini-2.5-pro-preview-03-25">2.5 pro</option>
+          </optgroup>
           <optgroup label="Claude">
+            <option value="claude-sonnet-4-5">Sonnet 4.5</option>
             <option value="claude-sonnet-4-6">Sonnet 4.6</option>
             <option value="claude-opus-4-5">Opus 4.5</option>
           </optgroup>
@@ -303,7 +268,7 @@
           <option value="video_summary">video</option>
         </select>
         <label>top-k</label>
-        <input type="number" id="cfg-topk" value="10" min="1" max="20"/>
+        <input type="number" id="cfg-topk" value="6" min="1" max="20"/>
         <button class="btn-icon" id="btn-prompt-toggle" onclick="togglePrompt()">⟨/⟩</button>
         <button class="btn-icon danger" onclick="clearChat()">↺ new chat</button>
       </div>
@@ -474,11 +439,13 @@ async function sendMessage() {
     es.addEventListener('token', e => {
       fullText += JSON.parse(e.data);
       textEl.innerHTML = renderMd(fullText);
+      applyKatex(textEl);
       const cur = document.createElement('span');
       cur.className = 'cursor';
       textEl.appendChild(cur);
       scrollThread();
     });
+
     es.addEventListener('done', e => {
       const meta = JSON.parse(e.data);
       textEl.innerHTML = renderMd(fullText);
@@ -501,7 +468,7 @@ async function sendMessage() {
       toast(msg, 'error');
       log('Error: ' + msg);
       textEl.innerHTML = fullText ? renderMd(fullText) : '<em style="color:var(--red)">Error</em>';
-      if (fullText) applyKatex(textEl);
+      applyKatex(textEl);
       textEl.removeAttribute('id');
       setBusy(false);
       es.close();
@@ -591,25 +558,87 @@ function log(msg) { document.getElementById('progress-log').textContent = msg; }
 function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function escapeAttr(s) { return String(s||'').replace(/"/g,'&quot;'); }
 
-function renderMd(text) {
-  return marked.parse(text, { breaks: true, gfm: true });
-}
-function applyKatex(el) {
-  if (typeof renderMathInElement === 'function') {
-    renderMathInElement(el, {
-      delimiters: [
-        { left: '$$',  right: '$$',  display: true  },
-        { left: '\\(', right: '\\)', display: false },
-        { left: '\\[', right: '\\]', display: true  },
-      ],
-      throwOnError: false,
-    });
-  }
-}
-
 document.getElementById('cfg-system-prompt').value = DEFAULT_SYSTEM_PROMPT;
 refreshStats();
 setInterval(refreshStats, 8000);
+
+/* ── Markdown + LaTeX pipeline ─────────────────────────────────────────────
+ *
+ * Problem: marked.parse() mangles LaTeX delimiters before KaTeX sees them.
+ *   - Backslashes get escaped  (\( becomes \\()
+ *   - Underscores become <em>  (x_i becomes x<em>i)
+ *
+ * Fix: extract every LaTeX block FIRST (replace with opaque placeholders),
+ * let marked parse the clean markdown, then restore raw LaTeX into
+ * <span data-latex> elements that katex.renderToString() handles safely.
+ * ────────────────────────────────────────────────────────────────────── */
+/* ── Markdown + LaTeX pipeline ────────────────────────────────────────────────
+ *
+ * marked.parse() mangles LaTeX before KaTeX ever sees it:
+ *   - Backslashes get escaped:   \( → \\(
+ *   - Underscores become <em>:   x_i → x<em>i</em>
+ *   - Dollar signs trigger code spans
+ *
+ * Fix: stash every LaTeX block as an opaque placeholder BEFORE marked runs,
+ * then restore each one as a <span data-raw="..."> that katex.renderToString
+ * can safely process — completely bypassing the marked pipeline.
+ * ─────────────────────────────────────────────────────────────────────────── */
+function renderMd(text) {
+  const stash = [];
+
+  function hide(raw, display) {
+    const id = '\x02' + stash.length + '\x03';
+    stash.push({ id, raw, display });
+    return id;
+  }
+
+  // Extract in priority order — longest/greediest delimiters first
+  // 1. $$...$$ display (multiline OK)
+  let s = text.replace(/\$\$([\s\S]+?)\$\$/g,   (_, m) => hide('$$' + m + '$$', true));
+  // 2. \[...\] display (multiline OK)
+  s = s.replace(/\\\[([\s\S]+?)\\\]/g,           (_, m) => hide('\\[' + m + '\\]', true));
+  // 3. \(...\) inline
+  s = s.replace(/\\\(([\s\S]+?)\\\)/g,           (_, m) => hide('\\(' + m + '\\)', false));
+  // 4. $...$ inline — single line, non-space at both boundaries
+  s = s.replace(/\$([^\s$\n][^$\n]*?[^\s$\n]|\S)\$/g, (_, m) => hide('$' + m + '$', false));
+
+  // marked runs on LaTeX-free text — no mangling possible
+  let html = marked.parse(s, { breaks: true, gfm: true });
+
+  // Restore as data-attribute spans; katex.renderToString will fill them in
+  for (const { id, raw, display } of stash) {
+    const esc = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;')
+                   .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    html = html.replace(id,
+      `<span class="latex-pending" data-display="${display}" data-raw="${esc}"></span>`);
+  }
+  return html;
+}
+
+function applyKatex(el) {
+  el.querySelectorAll('span.latex-pending').forEach(span => {
+    const display = span.dataset.display === 'true';
+    const raw = span.dataset.raw
+      .replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+      .replace(/&gt;/g,'>').replace(/&quot;/g,'"');
+    // Strip outer delimiters — KaTeX wants bare LaTeX source
+    const inner = raw
+      .replace(/^\$\$([\s\S]*)\$\$$/, '$1')
+      .replace(/^\\\[([\s\S]*)\\\]$/, '$1')
+      .replace(/^\\\(([\s\S]*)\\\)$/, '$1')
+      .replace(/^\$([\s\S]*)\$$/, '$1');
+    try {
+      span.outerHTML = katex.renderToString(inner, {
+        displayMode: display,
+        throwOnError: false,
+        trust: false,
+      });
+    } catch(e) {
+      span.textContent = raw;
+      span.className = 'latex-error';
+    }
+  });
+}
 </script>
 </body>
 </html>
