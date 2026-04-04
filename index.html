@@ -1,392 +1,546 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<title>Portfolio RAG</title>
+<title>Professor Bhagwan Chowdhry</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  /* ── Theme tokens ─────────────────────────────────────────────── */
   :root {
-    --bg:        #0b0c0e;
-    --bg2:       #111318;
-    --bg3:       #181b22;
-    --border:    #272b36;
-    --border2:   #323848;
-    --amber:     #f0a030;
-    --amber-dim: #a06820;
-    --amber-glow:#f0a03022;
-    --green:     #3ddc84;
-    --green-dim: #1a7a40;
-    --red:       #ff5c6a;
-    --blue:      #5b9cf6;
-    --text:      #d4d8e8;
-    --text-dim:  #6b7280;
-    --text-mid:  #9aa0b4;
-    --mono:      'IBM Plex Mono', monospace;
-    --sans:      'IBM Plex Sans', sans-serif;
-    --radius:    6px;
-    --header-h:  48px;
+    --font: 'Inter', sans-serif;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --header-h: 52px;
   }
 
-  html, body { height:100%; background:var(--bg); color:var(--text); font-family:var(--mono); font-size:13px; line-height:1.6; overflow:hidden; }
+  [data-theme="dark"] {
+    --bg:           #1e1e1e;
+    --bg2:          #2a2a2a;
+    --bg3:          #333333;
+    --border:       #3a3a3a;
+    --border-chip:  #3f3f3f;
+    --text:         #ececec;
+    --text-dim:     #8e8e8e;
+    --text-mid:     #b0b0b0;
+    --text-chip:    #c0c0c0;
+    --amber:        #e8834a;
+    --amber-dim:    #c06030;
+    --amber-glow:   #e8834a22;
+    --blue:         #5b9cf6;
+    --green:        #3ddc84;
+    --red:          #ff5c6a;
+    --input-bg:     #2c2c2c;
+    --input-border: #4a4a4a;
+    --btn-bg:       #2a2a2a;
+    --shadow:       0 8px 32px rgba(0,0,0,0.4);
+    --toggle-bg:    #3a3a3a;
+    --toggle-knob:  #ececec;
+    --header-bg:    #1e1e1e;
+  }
+
+  [data-theme="light"] {
+    --bg:           #ffffff;
+    --bg2:          #ffffff;
+    --bg3:          #f4f4f5;
+    --border:       #e4e4e7;
+    --border-chip:  #e4e4e7;
+    --text:         #09090b;
+    --text-dim:     #71717a;
+    --text-mid:     #52525b;
+    --text-chip:    #3f3f46;
+    --amber:        #d97706;
+    --amber-dim:    #b45309;
+    --amber-glow:   #f59e0b15;
+    --blue:         #2563eb;
+    --green:        #16a34a;
+    --red:          #ef4444;
+    --input-bg:     #ffffff;
+    --input-border: #e4e4e7;
+    --btn-bg:       #ffffff;
+    --shadow:       0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --toggle-bg:    #e4e4e7;
+    --toggle-knob:  #ffffff;
+    --header-bg:    #ffffff;
+  }
+
+  /* ── Base ─────────────────────────────────────────────────────── */
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.6;
+    overflow: hidden;
+    transition: background 0.25s, color 0.25s;
+  }
 
   #app {
-    display:grid;
-    grid-template-rows:var(--header-h) 1fr;
-    grid-template-columns:1fr 320px;
-    grid-template-areas:"header header" "center right";
-    height:100vh; height:100dvh;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
   }
 
-  /* Header */
-  #header { grid-area:header; display:flex; align-items:center; gap:12px; padding:0 16px; border-bottom:1px solid var(--border); background:var(--bg); z-index:10; }
-  .logo { font-size:12px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--amber); white-space:nowrap; }
-  .logo span { color:var(--text-dim); font-weight:300; }
-  #header-right { display:flex; align-items:center; gap:10px; margin-left:auto; }
-  .stat-pill { font-size:11px; color:var(--text-dim); display:flex; gap:5px; align-items:center; white-space:nowrap; }
-  .stat-pill .val { color:var(--text-mid); }
-  .stat-pill.live .val { color:var(--green); }
-  #btn-chunks-toggle { display:none; align-items:center; gap:5px; background:transparent; border:1px solid var(--border2); color:var(--text-dim); font-family:var(--mono); font-size:10px; padding:5px 9px; border-radius:var(--radius); cursor:pointer; white-space:nowrap; transition:all 0.15s; -webkit-tap-highlight-color:transparent; }
-  #btn-chunks-toggle:active { opacity:0.7; }
-  #btn-chunks-toggle .badge { background:var(--blue); color:#0b0c0e; font-size:9px; font-weight:700; padding:0 4px; border-radius:2px; min-width:16px; text-align:center; }
+  /* ── Header ───────────────────────────────────────────────────── */
+  #header {
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--header-bg);
+    flex-shrink: 0;
+    z-index: 10;
+    transition: background 0.25s, border-color 0.25s;
+  }
 
-  /* Center */
-  #center { grid-area:center; display:flex; flex-direction:column; border-right:1px solid var(--border); background:var(--bg); overflow:hidden; min-width:0; }
+  .logo {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--text);
+  }
 
-  /* Thread */
-  #thread { flex:1; overflow-y:auto; padding:20px 20px 10px; scrollbar-width:thin; scrollbar-color:var(--border2) transparent; -webkit-overflow-scrolling:touch; display:flex; flex-direction:column; gap:18px; }
-  .thread-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:12px; color:var(--text-dim); text-align:center; padding:24px; }
-  .thread-empty .big { font-size:28px; opacity:0.18; }
-  .thread-empty p { font-size:12px; letter-spacing:0.06em; }
+  .logo span {
+    color: var(--amber);
+  }
 
-  /* Bubbles */
-  .turn { display:flex; flex-direction:column; gap:6px; animation:fadeUp 0.2s ease; }
+  /* Online status pill */
+  #server-status {
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 14px;
+  }
+
+  /* Dark/light toggle */
+  #theme-toggle-wrap {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .theme-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    user-select: none;
+  }
+
+  #theme-toggle {
+    position: relative;
+    width: 42px;
+    height: 24px;
+    border-radius: 999px;
+    background: var(--toggle-bg);
+    border: none;
+    cursor: pointer;
+    transition: background 0.25s;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #theme-toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--toggle-knob);
+    transition: transform 0.25s, background 0.25s;
+  }
+
+  [data-theme="light"] #theme-toggle::after {
+    transform: translateX(18px);
+  }
+
+  /* ── Main area ────────────────────────────────────────────────── */
+  #main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ── Thread ───────────────────────────────────────────────────── */
+  #thread {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 20px 16px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  /* ── Welcome / Hero ───────────────────────────────────────────── */
+  #thread-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    padding: 24px 16px 0;
+    text-align: center;
+    gap: 0;
+  }
+
+  .hero-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    object-fit: cover;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+
+
+
+  .hero-avatar-quote {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-bottom: 6px;
+    letter-spacing: 0.01em;
+  }
+
+  .hero-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 480px) {
+    .hero-title { font-size: 20px; }
+  }
+
+  /* Bio link */
+  .hero-bio-link {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    margin-bottom: 32px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .hero-bio-link:hover { color: var(--amber); }
+
+
+
+  /* ── Chat bubbles ─────────────────────────────────────────────── */
+  .turn { display: flex; flex-direction: column; gap: 6px; animation: fadeUp 0.2s ease; max-width: 760px; width: 100%; margin: 0 auto; }
   @keyframes fadeUp { from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;} }
 
   .bubble-user {
-    align-self:flex-end; max-width:72%;
-    background:var(--bg3); border:1px solid var(--border2);
-    border-radius:var(--radius) var(--radius) 2px var(--radius);
-    padding:10px 14px; font-family:var(--mono); font-size:12px;
-    color:var(--amber); word-break:break-word;
+    align-self: flex-end;
+    max-width: 72%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius) var(--radius) 3px var(--radius);
+    padding: 10px 16px;
+    font-size: 14px;
+    color: var(--amber);
+    word-break: break-word;
   }
-  .bubble-assistant { align-self:flex-start; max-width:90%; }
+
+  .bubble-assistant { align-self: flex-start; max-width: 92%; width: 100%; }
   .bubble-assistant-inner {
-    background:var(--bg2); border:1px solid var(--border);
-    border-radius:2px var(--radius) var(--radius) var(--radius);
-    padding:12px 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 3px var(--radius) var(--radius) var(--radius);
+    padding: 10px 14px;
+    transition: background 0.25s;
   }
-  .bubble-text { font-family:var(--sans); font-size:14px; line-height:1.75; color:var(--text); white-space:pre-wrap; word-break:break-word; }
-  .bubble-text .cursor { display:inline-block; width:2px; height:1em; background:var(--amber); animation:blink 0.8s infinite; vertical-align:text-bottom; margin-left:2px; }
+
+  .bubble-text { font-size: 14px; line-height: 1.5; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+  .bubble-text .cursor { display: inline-block; width: 2px; height: 1em; background: var(--amber); animation: blink 0.8s infinite; vertical-align: text-bottom; margin-left: 2px; }
   @keyframes blink { 0%,100%{opacity:1;}50%{opacity:0;} }
-  .bubble-meta { display:flex; gap:12px; flex-wrap:wrap; font-size:10px; color:var(--text-dim); margin-top:8px; }
-  .bubble-meta .mi { display:flex; gap:4px; align-items:center; }
-  .bubble-meta .mv { color:var(--text-mid); }
 
-  /* Input area */
-  #input-bar { display:flex; flex-direction:column; gap:7px; padding:10px 14px; border-top:1px solid var(--border); flex-shrink:0; background:var(--bg2); }
 
-  #prompt-row { display:none; }
-  #prompt-row.visible { display:block; }
-  #cfg-system-prompt { width:100%; background:var(--bg3); border:1px solid var(--border); color:var(--text); font-family:var(--mono); font-size:11px; line-height:1.55; padding:7px 10px; border-radius:var(--radius); outline:none; resize:vertical; min-height:80px; transition:border-color 0.15s; }
-  #cfg-system-prompt:focus { border-color:var(--amber-dim); box-shadow:0 0 0 2px var(--amber-glow); }
 
-  #filter-row { display:flex; gap:6px; align-items:center; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding-bottom:1px; }
-  #filter-row::-webkit-scrollbar { display:none; }
-  #filter-row label { font-size:10px; color:var(--text-dim); letter-spacing:0.08em; white-space:nowrap; flex-shrink:0; }
-  #filter-row select, #filter-row input[type="number"] { flex-shrink:0; background:var(--bg3); border:1px solid var(--border); color:var(--text); font-family:var(--mono); font-size:11px; padding:4px 7px; border-radius:var(--radius); outline:none; -webkit-appearance:none; cursor:pointer; }
-  #filter-row select:focus, #filter-row input:focus { border-color:var(--amber-dim); }
-  #cfg-topk { width:48px; }
-  select option { background:var(--bg3); }
-
-  .btn-icon { flex-shrink:0; background:transparent; border:1px solid var(--border2); color:var(--text-dim); font-family:var(--mono); font-size:10px; padding:4px 8px; border-radius:var(--radius); cursor:pointer; transition:all 0.15s; white-space:nowrap; -webkit-tap-highlight-color:transparent; }
-  .btn-icon:hover { border-color:var(--amber-dim); color:var(--amber); }
-  .btn-icon.active { border-color:var(--amber-dim); color:var(--amber); background:var(--amber-glow); }
-  .btn-icon.danger:hover { border-color:var(--red); color:var(--red); }
-
-  #send-row { display:flex; gap:8px; }
-  #query-input { flex:1; min-width:0; background:var(--bg3); border:1px solid var(--border); color:var(--text); font-family:var(--mono); font-size:16px; padding:9px 12px; border-radius:var(--radius); outline:none; transition:border-color 0.15s; -webkit-appearance:none; }
-  @media (min-width:480px) { #query-input { font-size:13px; } }
-  #query-input:focus { border-color:var(--amber-dim); box-shadow:0 0 0 2px var(--amber-glow); }
-  #query-input::placeholder { color:var(--text-dim); }
-
-  .btn-send { flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:9px 16px; border-radius:var(--radius); border:none; font-family:var(--mono); font-size:12px; font-weight:500; cursor:pointer; transition:all 0.15s; white-space:nowrap; min-height:40px; background:var(--amber); color:#0b0c0e; -webkit-tap-highlight-color:transparent; }
-  .btn-send:hover { background:#fdb040; }
-  .btn-send:active { transform:scale(0.97); }
-  .btn-send:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
-
-  #progress-log { padding:4px 14px 0; font-size:10px; color:var(--text-dim); flex-shrink:0; font-style:italic; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-height:16px; }
-
-  /* Right panel */
-  #right { grid-area:right; display:flex; flex-direction:column; overflow:hidden; background:var(--bg2); border-left:1px solid var(--border); }
-  .panel-header { padding:10px 14px 8px; border-bottom:1px solid var(--border); font-size:10px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-dim); flex-shrink:0; display:flex; align-items:center; gap:8px; }
-  .panel-header .dot { width:6px; height:6px; border-radius:50%; background:var(--blue); box-shadow:0 0 6px var(--blue); flex-shrink:0; }
-  .panel-body { flex:1; overflow-y:auto; padding:12px; scrollbar-width:thin; scrollbar-color:var(--border2) transparent; -webkit-overflow-scrolling:touch; }
-
-  .chunk-card { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:10px; overflow:hidden; animation:slideIn 0.2s ease forwards; opacity:0; }
-  @keyframes slideIn { from{opacity:0;transform:translateX(8px);}to{opacity:1;transform:none;} }
-  .chunk-card:hover { border-color:var(--border2); }
-  .chunk-head { padding:8px 10px; display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--border); gap:8px; }
-  .chunk-rank { font-size:10px; font-weight:600; color:var(--amber); flex-shrink:0; margin-top:1px; }
-  .chunk-meta { flex:1; min-width:0; }
-  .chunk-title { font-size:11px; color:var(--text); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .chunk-tags { display:flex; gap:4px; margin-top:4px; flex-wrap:wrap; }
-  .tag { font-size:10px; padding:1px 6px; border-radius:2px; font-weight:500; }
-  .tag-section { background:#5b9cf622; color:var(--blue); }
-  .tag-type    { background:#3ddc8422; color:var(--green); }
-  .tag-type.video { background:#f0a03022; color:var(--amber); }
-  .tag-type.index { background:#9b59f622; color:#c085ff; }
-  .chunk-score { font-size:11px; color:var(--text-dim); flex-shrink:0; }
-  .score-bar { width:44px; height:3px; background:var(--border); border-radius:2px; margin-top:4px; }
-  .score-fill { height:100%; background:var(--amber); border-radius:2px; transition:width 0.4s; }
-  .chunk-body { padding:10px; font-size:11px; color:var(--text-mid); line-height:1.6; max-height:0; overflow:hidden; transition:max-height 0.3s ease; }
-  .chunk-body.open { max-height:220px; overflow-y:auto; }
-  .chunk-toggle { width:100%; background:none; border:none; border-top:1px solid var(--border); color:var(--text-dim); font-size:10px; font-family:var(--mono); padding:7px; cursor:pointer; text-align:center; transition:color 0.15s,background 0.15s; min-height:32px; -webkit-tap-highlight-color:transparent; }
-  .chunk-toggle:hover { background:var(--border); color:var(--text); }
-  .chunks-empty { font-size:12px; color:var(--text-dim); text-align:center; padding:40px 0; font-style:italic; }
-
-  /* Mobile */
-  @media (max-width:767px) {
-    #app { grid-template-columns:1fr; grid-template-areas:"header" "center"; }
-    #right { position:fixed; bottom:0; left:0; right:0; height:72vh; border-left:none; border-top:2px solid var(--border2); border-radius:14px 14px 0 0; transform:translateY(100%); transition:transform 0.32s cubic-bezier(0.32,0.72,0,1); z-index:100; box-shadow:0 -12px 48px #00000090; }
-    #right.open { transform:translateY(0); }
-    #right::before { content:''; display:block; width:40px; height:4px; background:var(--border2); border-radius:2px; margin:10px auto 0; flex-shrink:0; }
-    #sheet-overlay { display:none; position:fixed; inset:0; background:#00000070; z-index:99; backdrop-filter:blur(2px); }
-    #sheet-overlay.open { display:block; }
-    #btn-chunks-toggle { display:inline-flex; }
-    .stat-pill:not(#server-status) { display:none; }
-    #thread { padding:14px 12px 8px; }
-    .bubble-user { max-width:88%; }
-    .bubble-assistant { max-width:100%; }
-    .bubble-text { font-size:14px; }
-    #input-bar { padding:8px 12px; }
-  }
-  @media (max-width:399px) {
-    .logo { font-size:11px; }
-    #filter-row select { max-width:80px; }
+  /* ── Bottom input bar ─────────────────────────────────────────── */
+  #input-area {
+    flex-shrink: 0;
+    padding: 12px 16px 20px;
+    background: var(--bg);
+    transition: background 0.25s;
   }
 
-  /* Toasts */
-  #toast { position:fixed; bottom:24px; right:16px; z-index:200; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
-  @media (max-width:767px) { #toast { bottom:80px; left:16px; right:16px; } }
-  .toast-msg { background:var(--bg3); border:1px solid var(--border2); color:var(--text); font-size:12px; padding:10px 14px; border-radius:var(--radius); animation:toastIn 0.2s ease; display:flex; gap:8px; align-items:center; box-shadow:0 4px 20px #00000060; }
-  @keyframes toastIn { from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;} }
-  .toast-msg.success { border-color:var(--green-dim); }
-  .toast-msg.error   { border-color:#ff5c6a55; }
-  .toast-msg.info    { border-color:var(--amber-dim); }
+  #input-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
-  ::-webkit-scrollbar { width:4px; height:4px; }
-  ::-webkit-scrollbar-track { background:transparent; }
-  ::-webkit-scrollbar-thumb { background:var(--border2); border-radius:4px; }
-  .spinner { display:inline-block; width:10px; height:10px; border:2px solid var(--border2); border-top-color:var(--amber); border-radius:50%; animation:spin 0.7s linear infinite; }
+
+
+  /* Main input row */
+  #send-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius);
+    padding: 6px 8px 6px 16px;
+    box-shadow: var(--shadow);
+    transition: border-color 0.2s, background 0.25s;
+  }
+
+  #send-row:focus-within {
+    border-color: var(--amber-dim);
+  }
+
+  #query-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15px;
+    outline: none;
+    -webkit-appearance: none;
+    line-height: 1.5;
+    padding: 4px 0;
+  }
+
+  @media (min-width: 480px) { #query-input { font-size: 14px; } }
+  #query-input::placeholder { color: var(--text-dim); }
+
+  .icon-btn {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .icon-btn:hover { background: var(--bg3); color: var(--text); }
+
+  .btn-send-circle {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: var(--amber);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, opacity 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-send-circle:hover { background: var(--amber-dim); }
+  .btn-send-circle:disabled { opacity: 0.4; cursor: not-allowed; }
+
+
+
+  /* ── Scrollbar ────────────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* ── Misc ─────────────────────────────────────────────────────── */
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--amber); border-radius: 50%; animation: spin 0.7s linear infinite; }
   @keyframes spin { to{transform:rotate(360deg);} }
-  .hidden { display:none !important; }
+  .hidden { display: none !important; }
 
-  /* KaTeX display math */
-  .bubble-text .katex-display { overflow-x:auto; padding:4px 0; }
-  .latex-error { color:var(--red); font-family:var(--mono); font-size:0.85em; }
+  .bubble-text .katex-display { overflow-x: auto; padding: 4px 0; }
+  .latex-error { color: var(--red); font-size: 0.85em; }
+
+  /* Markdown inside bubbles */
+  .bubble-text p { margin-bottom: 0.3em; }
+  .bubble-text p:last-child { margin-bottom: 0; }
+  .bubble-text ul, .bubble-text ol { padding-left: 20px; margin-bottom: 0.3em; }
+  .bubble-text code { font-size: 12px; background: var(--bg3); padding: 1px 5px; border-radius: 4px; }
+  .bubble-text pre { background: var(--bg3); padding: 10px 12px; border-radius: var(--radius-sm); overflow-x: auto; margin-bottom: 0.3em; }
+  .bubble-text pre code { background: none; padding: 0; }
+  .bubble-text h1, .bubble-text h2, .bubble-text h3 { margin: 0.25em 0 0.05em; font-weight: 600; }
 </style>
 </head>
 <body>
 
-<div id="sheet-overlay" onclick="closeChunks()"></div>
-
 <div id="app">
 
+  <!-- ── Header ──────────────────────────────────────────────────── -->
   <header id="header">
-    <div class="logo">Portfolio<span>.RAG</span></div>
-    <div id="header-right">
-      <div id="server-status" class="stat-pill"><span class="val" id="server-status-text">connecting…</span></div>
-      <div class="stat-pill"><span>chunks</span><span class="val" id="stat-chunks">—</span></div>
-      <div class="stat-pill"><span>docs</span><span class="val" id="stat-docs">—</span></div>
-      <button id="btn-chunks-toggle" onclick="openChunks()">
-        ◈ chunks <span class="badge" id="mobile-chunk-badge">0</span>
-      </button>
+    <div class="logo"><span>BHAGWAN CHOWDHRY</span></div>
+    <div id="server-status">
+      <span id="server-status-text">connecting…</span>
+    </div>
+
+
+    <div id="theme-toggle-wrap">
+      <span class="theme-label" id="theme-label">Dark</span>
+      <button id="theme-toggle" aria-label="Toggle dark/light mode" onclick="toggleTheme()"></button>
     </div>
   </header>
 
-  <main id="center">
+  <!-- ── Main ────────────────────────────────────────────────────── -->
+  <div id="main">
+
+    <!-- Thread -->
     <div id="thread">
-      <div class="thread-empty" id="thread-empty">
-        <div class="big">◈</div>
-        <p>Start a conversation about the portfolio.</p>
+      <!-- Hero / Welcome state -->
+      <div id="thread-empty">
+        <img src="Bhagwan.jpeg" class="hero-avatar" alt="Professor Bhagwan Chowdhry">
+        <div class="hero-title">Professor Bhagwan Chowdhry</div>
+      
+        <div class="hero-avatar-quote">Hello, I am not Bhagwan<br>I am his Avatar!</div>
+        <a class="hero-bio-link" href="https://bhag.one/" target="_blank" rel="noopener">Prof. Bhagwan Chowdhry biography ↗</a>
+
+
       </div>
     </div>
 
-    <div id="progress-log"></div>
+    <!-- Input area -->
+    <div id="input-area">
+      <div id="input-wrap">
 
-    <div id="input-bar">
-      <div id="prompt-row">
-        <textarea id="cfg-system-prompt" rows="4" spellcheck="false"></textarea>
-      </div>
 
-      <div id="filter-row">
-        <label>model</label>
-        <select id="cfg-model">
-          <optgroup label="Claude">
-            <option value="claude-sonnet-4-6">Sonnet 4.6</option>
-            <option value="claude-opus-4-5">Opus 4.5</option>
-          </optgroup>
-        </select>
-        <label>section</label>
-        <select id="cfg-section">
-          <option value="">all</option>
-          <option value="biography">biography</option>
-          <option value="video">video</option>
-          <option value="opinion">opinion</option>
-          <option value="employment">employment</option>
-          <option value="education">education</option>
-          <option value="advisor">advisor</option>
-          <option value="cases">cases</option>
-          <option value="research">research</option>
-          <option value="associate_editor">assoc. editor</option>
-          <option value="contact">contact</option>
-          <option value="executive_teaching">exec. teaching</option>
-          <option value="research_in_progress">research WIP</option>
-          <option value="working_papers">working papers</option>
-          <option value="fame">fame</option>
-          <option value="general">general</option>
-        </select>
-        <label>type</label>
-        <select id="cfg-doctype">
-          <option value="">all</option>
-          <option value="index">index</option>
-          <option value="text">text</option>
-          <option value="video_summary">video</option>
-        </select>
-        <label>top-k</label>
-        <input type="number" id="cfg-topk" value="10" min="1" max="20"/>
-        <button class="btn-icon" id="btn-prompt-toggle" onclick="togglePrompt()">⟨/⟩</button>
-        <button class="btn-icon danger" onclick="clearChat()">↺ new chat</button>
-      </div>
 
-      <div id="send-row">
-        <input id="query-input" type="text"
-               placeholder="Ask about the portfolio…"
-               onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendMessage()"/>
-        <button class="btn-send" id="btn-send" onclick="sendMessage()">
-          <span id="btn-send-label">Send</span>
-          <span id="btn-spinner" class="spinner hidden"></span>
-        </button>
+        <!-- Main send row -->
+        <div id="send-row">
+
+          <input id="query-input" type="text"
+                 placeholder="Ask anything"
+                 onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendMessage()"/>
+
+          <!-- Mic icon -->
+          <button class="icon-btn" aria-label="Voice input">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="9" y="2" width="6" height="12" rx="3"/>
+              <path d="M5 10a7 7 0 0014 0"/>
+              <line x1="12" y1="19" x2="12" y2="22"/>
+            </svg>
+          </button>
+
+          <!-- Send button -->
+          <button class="btn-send-circle" id="btn-send" onclick="sendMessage()">
+            <span id="btn-spinner" class="spinner hidden"></span>
+            <svg id="btn-arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <line x1="12" y1="19" x2="12" y2="5"/>
+              <polyline points="5 12 12 5 19 12"/>
+            </svg>
+          </button>
+        </div>
+
+
       </div>
     </div>
-  </main>
 
-  <aside id="right">
-    <div class="panel-header" id="sheet-handle">
-      <span class="dot"></span>
-      Retrieved Chunks
-      <span id="chunk-count" style="margin-left:auto;color:var(--text-dim);font-size:10px"></span>
-    </div>
-    <div class="panel-body" id="chunks-pane">
-      <div class="chunks-empty">Chunks will appear after a query.</div>
-    </div>
-  </aside>
+  </div><!-- /#main -->
+</div><!-- /#app -->
 
-</div>
-<div id="toast"></div>
+
 
 <script>
-const API = 'https://profile-rag.onrender.com';
+/* ── Config ─────────────────────────────────────────────────────── */
+const API = 'http://127.0.0.1:8000';
 
-const DEFAULT_SYSTEM_PROMPT = `
-Speak as Bhagwan Chowdhry, a finance professor with genuine intellectual enthusiasm and deep concern for human welfare. Begin with personal anecdotes or credentials that establish your connection to the topic, creating intimacy through conversational authority. Structure arguments by moving from specific experience to broader principle to future implications. Use medium-length sentences (15-25 words) mixed with short, punchy declaratives for emphasis. Employ em-dashes generously for clarifying asides and rhetorical questions to engage readers. Ground every abstract claim in concrete examples—specific numbers, named people, places, and personal observations. Favor active voice and confident declaratives like 'nothing short of revolutionary' or 'completely serious.' Explain technical terms naturally without jargon. Weave personal narrative throughout rather than front-loading it. Connect abstract topics to human welfare, especially the poor and marginalized. Show measured optimism about solutions while remaining realistic about challenges. Propose specific, actionable ideas rather than vague principles. Acknowledge limitations humbly while asserting expertise. End with future-focused projections that inspire action. Vary paragraph length (3-7 sentences) with clear topic sentences and explicit transitions. Let substance create emphasis rather than formatting tricks. Sprinkle a little humor, now and then.
-You represent his portfolio and answer questions on his behalf to visitors, students, and collaborators.
-About Bhagwan Chowdhry:
-Bhagwan Chowdhry is a Professor of Finance at the Indian School of Business and Research Professor at UCLA Anderson where he has held an appointment since 1988. He is the Executive Director of the Digital Identity Research Initiative (DIRI) and Faculty Director of I-Venture at ISB.
-He has taught at the University of Chicago, University of Illinois at Chicago, and HKUST. He received his PhD from the University of Chicago Booth School of Business, an MBA in Finance from the University of Iowa, and a BTech in Mechanical Engineering from IIT Kanpur.
-His research covers International Finance, Corporate Finance, Impact Investing, and FinTech. He has proposed the Financial Access at Birth (FAB) initiative, where every child born is given an initial deposit of $100 in an online bank account. He co-authored the book FinTech for Billions: Simple, Human, Ubiquitous.
 
-Rules:
-- Answer ONLY from the provided context.
-- If the answer is not in context, say so clearly. Do not use the word "context" in your responses.
-- Remember the conversation history and refer back to previous answers when relevant.
-- Be concise but complete.
-- If an answer is long, engage in a conversation instead of giving the long answer all at once.`;
 
-// Session id — one per tab, reset on "new chat"
+/* ── Session ────────────────────────────────────────────────────── */
 let SESSION_ID = crypto.randomUUID();
 
-// Mobile sheet
-function isMobile() { return window.innerWidth < 768; }
-function openChunks()  { document.getElementById('right').classList.add('open'); document.getElementById('sheet-overlay').classList.add('open'); }
-function closeChunks() { document.getElementById('right').classList.remove('open'); document.getElementById('sheet-overlay').classList.remove('open'); }
-document.getElementById('sheet-handle').addEventListener('click', () => { if (isMobile()) closeChunks(); });
-(function(){
-  let sy = 0;
-  const s = document.getElementById('right');
-  s.addEventListener('touchstart', e => { sy = e.touches[0].clientY; }, { passive: true });
-  s.addEventListener('touchend',   e => { if (e.changedTouches[0].clientY - sy > 60) closeChunks(); }, { passive: true });
+/* ── Theme ──────────────────────────────────────────────────────── */
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-label').textContent = isDark ? 'Light' : 'Dark';
+  try { localStorage.setItem('theme', isDark ? 'light' : 'dark'); } catch {}
+}
+
+(function initTheme() {
+  try {
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+      document.documentElement.setAttribute('data-theme', saved);
+      document.getElementById('theme-label').textContent = saved === 'dark' ? 'Dark' : 'Light';
+    }
+  } catch {}
 })();
 
-// Stats
+
+
+
+
+
+/* ── Stats / Status ─────────────────────────────────────────────── */
 async function refreshStats() {
   try {
     const r = await fetch(`${API}/stats`);
     if (!r.ok) { setStatus(false); return; }
-    const s = await r.json();
     setStatus(true);
-    document.getElementById('stat-chunks').textContent = s.total_chunks ?? '—';
-    document.getElementById('stat-docs').textContent   = s.total_documents ?? '—';
   } catch { setStatus(false); }
 }
+
 function setStatus(ok) {
   const el = document.getElementById('server-status-text');
+  if (!el) return;
   el.textContent = ok ? '● online' : '○ offline';
-  document.getElementById('server-status').classList.toggle('live', ok);
   el.style.color = ok ? 'var(--green)' : 'var(--red)';
 }
 
-// Prompt toggle
-function togglePrompt() {
-  const row = document.getElementById('prompt-row');
-  const btn = document.getElementById('btn-prompt-toggle');
-  row.classList.toggle('visible');
-  btn.classList.toggle('active', row.classList.contains('visible'));
-}
 
-// Clear / new chat
-async function clearChat() {
-  try { await fetch(`${API}/sessions/${SESSION_ID}`, { method: 'DELETE' }); } catch {}
-  SESSION_ID = crypto.randomUUID();
-  const thread = document.getElementById('thread');
-  thread.innerHTML = `<div class="thread-empty" id="thread-empty">
-    <div class="big">◈</div>
-    <p>Start a conversation about the portfolio.</p>
-  </div>`;
-  clearChunks();
-  log('');
-  toast('New conversation started', 'info');
-}
-
-// Busy state
+/* ── Busy state ─────────────────────────────────────────────────── */
 function setBusy(busy) {
-  document.getElementById('btn-send').disabled    = busy;
-  document.getElementById('query-input').disabled = busy;
-  document.getElementById('btn-send-label').textContent = busy ? '…' : 'Send';
+  document.getElementById('btn-send').disabled      = busy;
+  document.getElementById('query-input').disabled   = busy;
   document.getElementById('btn-spinner').classList.toggle('hidden', !busy);
+  document.getElementById('btn-arrow').classList.toggle('hidden', busy);
 }
 
-// Send message
+/* ── Send message ───────────────────────────────────────────────── */
 async function sendMessage() {
   const question = document.getElementById('query-input').value.trim();
   if (!question) return;
   document.getElementById('query-input').value = '';
   document.getElementById('query-input').blur();
 
+  // Remove hero on first message
   const emptyEl = document.getElementById('thread-empty');
   if (emptyEl) emptyEl.remove();
 
   setBusy(true);
-  clearChunks();
-  log('Retrieving…');
+
 
   const thread = document.getElementById('thread');
 
@@ -403,7 +557,6 @@ async function sendMessage() {
     <div class="bubble-assistant">
       <div class="bubble-assistant-inner">
         <div class="bubble-text" id="current-bubble"><span class="cursor"></span></div>
-        <div class="bubble-meta" id="current-meta"></div>
       </div>
     </div>`;
   thread.appendChild(asstTurn);
@@ -412,11 +565,6 @@ async function sendMessage() {
   const params = new URLSearchParams({
     question,
     session_id:    SESSION_ID,
-    top_k:         document.getElementById('cfg-topk').value,
-    gemini_model:  document.getElementById('cfg-model').value,
-    system_prompt: document.getElementById('cfg-system-prompt').value.trim() || DEFAULT_SYSTEM_PROMPT,
-    ...(document.getElementById('cfg-section').value  && { section_filter:  document.getElementById('cfg-section').value }),
-    ...(document.getElementById('cfg-doctype').value  && { doc_type_filter: document.getElementById('cfg-doctype').value }),
   });
 
   const textEl = document.getElementById('current-bubble');
@@ -424,8 +572,6 @@ async function sendMessage() {
 
   try {
     const es = new EventSource(`${API}/query/stream?${params}`);
-
-    es.addEventListener('chunk', e => { renderChunk(JSON.parse(e.data)); });
 
     es.addEventListener('token', e => {
       fullText += JSON.parse(e.data);
@@ -441,23 +587,14 @@ async function sendMessage() {
       const meta = JSON.parse(e.data);
       textEl.innerHTML = renderMd(fullText);
       applyKatex(textEl);
-      renderBubbleMeta(document.getElementById('current-meta'), meta);
       textEl.removeAttribute('id');
-      document.getElementById('current-meta')?.removeAttribute('id');
-      log(`Done — ${meta.tokens_used ?? '?'} tokens`);
       setBusy(false);
       es.close();
-      if (isMobile() && chunkCount > 0) {
-        const btn = document.getElementById('btn-chunks-toggle');
-        btn.style.borderColor = 'var(--blue)';
-        btn.style.color = 'var(--blue)';
-      }
     });
 
     es.addEventListener('error', e => {
       const msg = e.data ? JSON.parse(e.data) : 'Stream error';
-      toast(msg, 'error');
-      log('Error: ' + msg);
+
       textEl.innerHTML = fullText ? renderMd(fullText) : '<em style="color:var(--red)">Error</em>';
       applyKatex(textEl);
       textEl.removeAttribute('id');
@@ -467,12 +604,12 @@ async function sendMessage() {
 
     es.onerror = () => {
       if (es.readyState === EventSource.CLOSED) return;
-      toast('Connection lost', 'error');
+      console.error('Connection lost');
       setBusy(false);
       es.close();
     };
   } catch(e) {
-    toast('Query failed: ' + e.message, 'error');
+    console.error('Query failed: ', e);
     setBusy(false);
   }
 }
@@ -482,126 +619,28 @@ function scrollThread() {
   t.scrollTop = t.scrollHeight;
 }
 
-// Chunks
-let chunkCount = 0;
-function clearChunks() {
-  chunkCount = 0;
-  document.getElementById('chunks-pane').innerHTML = '<div class="chunks-empty">Retrieving…</div>';
-  document.getElementById('chunk-count').textContent = '';
-  document.getElementById('mobile-chunk-badge').textContent = '0';
-  const btn = document.getElementById('btn-chunks-toggle');
-  btn.style.borderColor = ''; btn.style.color = '';
-}
-function renderChunk(c) {
-  const pane = document.getElementById('chunks-pane');
-  if (chunkCount === 0) pane.innerHTML = '';
-  chunkCount++;
-  document.getElementById('chunk-count').textContent = `${chunkCount}`;
-  document.getElementById('mobile-chunk-badge').textContent = chunkCount;
-  const typeClass = c.doc_type === 'video_summary' ? 'video' : c.doc_type === 'index' ? 'index' : '';
-  const scorePct  = Math.round(Math.min(c.score, 1) * 100);
-  const card = document.createElement('div');
-  card.className = 'chunk-card';
-  card.style.animationDelay = `${(chunkCount-1)*60}ms`;
-  card.innerHTML = `
-    <div class="chunk-head">
-      <div class="chunk-rank">#${c.rank}</div>
-      <div class="chunk-meta">
-        <div class="chunk-title" title="${escapeAttr(c.doc_title)}">${escapeHtml(c.doc_title)}</div>
-        <div class="chunk-tags">
-          <span class="tag tag-section">${escapeHtml(c.section)}</span>
-          <span class="tag tag-type ${typeClass}">${escapeHtml(c.doc_type)}</span>
-        </div>
-      </div>
-      <div>
-        <div class="chunk-score">${c.score.toFixed(3)}</div>
-        <div class="score-bar"><div class="score-fill" style="width:${scorePct}%"></div></div>
-      </div>
-    </div>
-    <div class="chunk-body" id="cb-${chunkCount}">${escapeHtml(c.raw_content)}</div>
-    <button class="chunk-toggle" onclick="toggleChunk(${chunkCount})">▾ show content</button>`;
-  pane.appendChild(card);
-}
-function toggleChunk(n) {
-  const b = document.getElementById(`cb-${n}`);
-  const o = b.classList.toggle('open');
-  b.nextElementSibling.textContent = o ? '▴ hide' : '▾ show content';
-}
 
-function renderBubbleMeta(el, meta) {
-  if (!el) return;
-  const sources = (meta.sources || [])
-    .map(s => `<a href="${escapeAttr(s.doc_url||'#')}" target="_blank" style="color:var(--blue);text-decoration:none" title="${escapeAttr(s.doc_title)}">[${s.doc_index}]</a>`)
-    .join(' ');
-  el.innerHTML = `
-    <div class="mi"><span>tokens</span><span class="mv">${meta.tokens_used ?? '—'}</span></div>
-    <div class="mi"><span>sources</span><span class="mv">${sources || '—'}</span></div>`;
-}
 
-function toast(msg, type='info') {
-  const el = document.createElement('div');
-  el.className = `toast-msg ${type}`;
-  el.textContent = `${type==='success'?'✓':type==='error'?'✕':'◈'}  ${msg}`;
-  document.getElementById('toast').appendChild(el);
-  setTimeout(() => el.remove(), 3800);
-}
-function log(msg) { document.getElementById('progress-log').textContent = msg; }
+
 function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function escapeAttr(s) { return String(s||'').replace(/"/g,'&quot;'); }
 
-document.getElementById('cfg-system-prompt').value = DEFAULT_SYSTEM_PROMPT;
-refreshStats();
-setInterval(refreshStats, 8000);
-
-/* ── Markdown + LaTeX pipeline ─────────────────────────────────────────────
- *
- * Problem: marked.parse() mangles LaTeX delimiters before KaTeX sees them.
- *   - Backslashes get escaped  (\( becomes \\()
- *   - Underscores become <em>  (x_i becomes x<em>i)
- *
- * Fix: extract every LaTeX block FIRST (replace with opaque placeholders),
- * let marked parse the clean markdown, then restore raw LaTeX into
- * <span data-latex> elements that katex.renderToString() handles safely.
- * ────────────────────────────────────────────────────────────────────── */
-/* ── Markdown + LaTeX pipeline ────────────────────────────────────────────────
- *
- * marked.parse() mangles LaTeX before KaTeX ever sees it:
- *   - Backslashes get escaped:   \( → \\(
- *   - Underscores become <em>:   x_i → x<em>i</em>
- *   - Dollar signs trigger code spans
- *
- * Fix: stash every LaTeX block as an opaque placeholder BEFORE marked runs,
- * then restore each one as a <span data-raw="..."> that katex.renderToString
- * can safely process — completely bypassing the marked pipeline.
- * ─────────────────────────────────────────────────────────────────────────── */
+/* ── Markdown + LaTeX ───────────────────────────────────────────── */
 function renderMd(text) {
   const stash = [];
-
   function hide(raw, display) {
     const id = '\x02' + stash.length + '\x03';
     stash.push({ id, raw, display });
     return id;
   }
-
-  // Extract in priority order — longest/greediest delimiters first
-  // 1. $$...$$ display (multiline OK)
   let s = text.replace(/\$\$([\s\S]+?)\$\$/g,   (_, m) => hide('$$' + m + '$$', true));
-  // 2. \[...\] display (multiline OK)
   s = s.replace(/\\\[([\s\S]+?)\\\]/g,           (_, m) => hide('\\[' + m + '\\]', true));
-  // 3. \(...\) inline
   s = s.replace(/\\\(([\s\S]+?)\\\)/g,           (_, m) => hide('\\(' + m + '\\)', false));
-  // 4. $...$ inline — single line, non-space at both boundaries
   s = s.replace(/\$([^\s$\n][^$\n]*?[^\s$\n]|\S)\$/g, (_, m) => hide('$' + m + '$', false));
-
-  // marked runs on LaTeX-free text — no mangling possible
   let html = marked.parse(s, { breaks: true, gfm: true });
-
-  // Restore as data-attribute spans; katex.renderToString will fill them in
   for (const { id, raw, display } of stash) {
-    const esc = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;')
-                   .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    html = html.replace(id,
-      `<span class="latex-pending" data-display="${display}" data-raw="${esc}"></span>`);
+    const esc = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    html = html.replace(id, `<span class="latex-pending" data-display="${display}" data-raw="${esc}"></span>`);
   }
   return html;
 }
@@ -612,24 +651,23 @@ function applyKatex(el) {
     const raw = span.dataset.raw
       .replace(/&amp;/g,'&').replace(/&lt;/g,'<')
       .replace(/&gt;/g,'>').replace(/&quot;/g,'"');
-    // Strip outer delimiters — KaTeX wants bare LaTeX source
     const inner = raw
       .replace(/^\$\$([\s\S]*)\$\$$/, '$1')
       .replace(/^\\\[([\s\S]*)\\\]$/, '$1')
       .replace(/^\\\(([\s\S]*)\\\)$/, '$1')
       .replace(/^\$([\s\S]*)\$$/, '$1');
     try {
-      span.outerHTML = katex.renderToString(inner, {
-        displayMode: display,
-        throwOnError: false,
-        trust: false,
-      });
+      span.outerHTML = katex.renderToString(inner, { displayMode: display, throwOnError: false, trust: false });
     } catch(e) {
       span.textContent = raw;
       span.className = 'latex-error';
     }
   });
 }
+
+/* ── Init ───────────────────────────────────────────────────────── */
+refreshStats();
+setInterval(refreshStats, 8000);
 </script>
 </body>
 </html>
