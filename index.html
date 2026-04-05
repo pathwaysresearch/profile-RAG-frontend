@@ -1,673 +1,1115 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<title>Professor Bhagwan Chowdhry</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Professor Bhagwan Chowdhry</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  /* ── Theme tokens ─────────────────────────────────────────────── */
-  :root {
-    --font: 'Inter', sans-serif;
-    --radius: 12px;
-    --radius-sm: 8px;
-    --header-h: 52px;
-  }
+    /* ── Theme tokens ─────────────────────────────────────────────── */
+    :root {
+      --font: 'Inter', sans-serif;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --header-h: 52px;
+      --transition: 0.25s ease;
+    }
 
-  [data-theme="dark"] {
-    --bg:           #1e1e1e;
-    --bg2:          #2a2a2a;
-    --bg3:          #333333;
-    --border:       #3a3a3a;
-    --border-chip:  #3f3f3f;
-    --text:         #ececec;
-    --text-dim:     #8e8e8e;
-    --text-mid:     #b0b0b0;
-    --text-chip:    #c0c0c0;
-    --amber:        #e8834a;
-    --amber-dim:    #c06030;
-    --amber-glow:   #e8834a22;
-    --blue:         #5b9cf6;
-    --green:        #3ddc84;
-    --red:          #ff5c6a;
-    --input-bg:     #2c2c2c;
-    --input-border: #4a4a4a;
-    --btn-bg:       #2a2a2a;
-    --shadow:       0 8px 32px rgba(0,0,0,0.4);
-    --toggle-bg:    #3a3a3a;
-    --toggle-knob:  #ececec;
-    --header-bg:    #1e1e1e;
-  }
+    [data-theme="dark"] {
+      --bg: #1a1a1a;
+      --bg2: #242424;
+      --bg3: #2e2e2e;
+      --border: #363636;
+      --text: #f0f0f0;
+      --text-dim: #888888;
+      --text-mid: #b0b0b0;
+      --amber: #e8834a;
+      --amber-dim: #c06030;
+      --amber-glow: rgba(232, 131, 74, 0.15);
+      --blue: #5b9cf6;
+      --green: #3ddc84;
+      --red: #ff5c6a;
+      --input-bg: #262626;
+      --input-border: #404040;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+      --shadow-big: 0 12px 48px rgba(0, 0, 0, 0.6);
+      --toggle-bg: #3a3a3a;
+      --toggle-knob: #f0f0f0;
+      --header-bg: rgba(26, 26, 26, 0.92);
+      --chip-bg: #2a2a2a;
+      --chip-border: #3a3a3a;
+      --chip-text: #aaaaaa;
+    }
 
-  [data-theme="light"] {
-    --bg:           #ffffff;
-    --bg2:          #ffffff;
-    --bg3:          #f4f4f5;
-    --border:       #e4e4e7;
-    --border-chip:  #e4e4e7;
-    --text:         #09090b;
-    --text-dim:     #71717a;
-    --text-mid:     #52525b;
-    --text-chip:    #3f3f46;
-    --amber:        #d97706;
-    --amber-dim:    #b45309;
-    --amber-glow:   #f59e0b15;
-    --blue:         #2563eb;
-    --green:        #16a34a;
-    --red:          #ef4444;
-    --input-bg:     #ffffff;
-    --input-border: #e4e4e7;
-    --btn-bg:       #ffffff;
-    --shadow:       0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --toggle-bg:    #e4e4e7;
-    --toggle-knob:  #ffffff;
-    --header-bg:    #ffffff;
-  }
+    [data-theme="light"] {
+      --bg: #f9f9f9;
+      --bg2: #ffffff;
+      --bg3: #f0f0f0;
+      --border: #e0e0e0;
+      --text: #111111;
+      --text-dim: #777777;
+      --text-mid: #555555;
+      --amber: #d97706;
+      --amber-dim: #b45309;
+      --amber-glow: rgba(217, 119, 6, 0.1);
+      --blue: #2563eb;
+      --green: #16a34a;
+      --red: #ef4444;
+      --input-bg: #ffffff;
+      --input-border: #d4d4d4;
+      --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      --shadow-big: 0 8px 32px rgba(0, 0, 0, 0.12);
+      --toggle-bg: #d4d4d4;
+      --toggle-knob: #ffffff;
+      --header-bg: rgba(249, 249, 249, 0.92);
+      --chip-bg: #f4f4f4;
+      --chip-border: #e0e0e0;
+      --chip-text: #555555;
+    }
 
-  /* ── Base ─────────────────────────────────────────────────────── */
-  html, body {
-    height: 100%;
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 14px;
-    line-height: 1.6;
-    overflow: hidden;
-    transition: background 0.25s, color 0.25s;
-  }
+    /* ── Base ─────────────────────────────────────────────────────── */
+    html,
+    body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.6;
+      overflow: hidden;
+      transition: background var(--transition), color var(--transition);
+    }
 
-  #app {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    height: 100dvh;
-  }
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
+      position: relative;
+    }
 
-  /* ── Header ───────────────────────────────────────────────────── */
-  #header {
-    height: var(--header-h);
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--header-bg);
-    flex-shrink: 0;
-    z-index: 10;
-    transition: background 0.25s, border-color 0.25s;
-  }
+    /* ── Header ───────────────────────────────────────────────────── */
+    #header {
+      height: var(--header-h);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--header-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      flex-shrink: 0;
+      z-index: 20;
+      transition: background var(--transition), border-color var(--transition);
+    }
 
-  .logo {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    color: var(--text);
-  }
+    .logo {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--text);
+    }
 
-  .logo span {
-    color: var(--amber);
-  }
+    .logo span {
+      color: var(--amber);
+    }
 
-  /* Online status pill */
-  #server-status {
-    font-size: 11px;
-    color: var(--text-dim);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-left: 14px;
-  }
+    #server-status {
+      font-size: 13px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+    }
 
-  /* Dark/light toggle */
-  #theme-toggle-wrap {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+    #theme-toggle-wrap {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-  .theme-label {
-    font-size: 11px;
-    color: var(--text-dim);
-    user-select: none;
-  }
+    .theme-label {
+      font-size: 11px;
+      color: var(--text-dim);
+      user-select: none;
+    }
 
-  #theme-toggle {
-    position: relative;
-    width: 42px;
-    height: 24px;
-    border-radius: 999px;
-    background: var(--toggle-bg);
-    border: none;
-    cursor: pointer;
-    transition: background 0.25s;
-    flex-shrink: 0;
-    -webkit-tap-highlight-color: transparent;
-  }
+    #theme-toggle {
+      position: relative;
+      width: 42px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--toggle-bg);
+      border: none;
+      cursor: pointer;
+      transition: background var(--transition);
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-  #theme-toggle::after {
-    content: '';
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--toggle-knob);
-    transition: transform 0.25s, background 0.25s;
-  }
+    #theme-toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--toggle-knob);
+      transition: transform var(--transition);
+    }
 
-  [data-theme="light"] #theme-toggle::after {
-    transform: translateX(18px);
-  }
+    [data-theme="light"] #theme-toggle::after {
+      transform: translateX(18px);
+    }
 
-  /* ── Main area ────────────────────────────────────────────────── */
-  #main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    position: relative;
-  }
+    /* ── Main ─────────────────────────────────────────────────────── */
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
 
-  /* ── Thread ───────────────────────────────────────────────────── */
-  #thread {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px 20px 16px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
+    /* ── Thread ───────────────────────────────────────────────────── */
+    #thread {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 20px 12px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
 
-  /* ── Welcome / Hero ───────────────────────────────────────────── */
-  #thread-empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    padding: 24px 16px 0;
-    text-align: center;
-    gap: 0;
-  }
+    /* ── Hero (empty state) ────────────────────────────────────────── */
+    /* When in hero mode, the entire main area is a centered flex column */
+    #app.hero-mode #main {
+      justify-content: center;
+      align-items: center;
+    }
 
-  .hero-avatar {
-    width: 128px;
-    height: 128px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    object-fit: cover;
-    margin-bottom: 18px;
-    box-shadow: var(--shadow);
-  }
+    #app.hero-mode #thread {
+      display: none;
+      /* hide empty thread scroll in hero mode */
+    }
+
+    /* Hero center container */
+    #hero-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 16px;
+      gap: 0;
+      width: 100%;
+      /* In hero mode this is shown */
+    }
+
+    #app:not(.hero-mode) #hero-center {
+      display: none;
+      /* hide once chatting */
+    }
+
+    .hero-avatar {
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      object-fit: cover;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-big);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hero-greeting {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .hero-sub {
+      font-size: 13px;
+      color: var(--text-dim);
+      max-width: 480px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    /* Name under avatar */
+    .hero-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+      letter-spacing: 0.01em;
+    }
+
+    /* ── Floating avatar (chat mode — top-right corner) ────────────── */
+    #floating-avatar {
+      position: fixed;
+      top: calc(var(--header-h) + 14px);
+      right: 16px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      object-fit: cover;
+      box-shadow: var(--shadow-big);
+      z-index: 15;
+      /* Start: large, centered on screen */
+      opacity: 0;
+      transform: translate(-44vw, 28vh) scale(3);
+      transition: opacity 0.5s ease, transform 0.7s cubic-bezier(0.34, 1.05, 0.64, 1);
+      pointer-events: none;
+      display: none;
+    }
+
+    #floating-avatar.visible {
+      display: block;
+      opacity: 1;
+      /* End: small, top-right */
+      transform: translate(0, 0) scale(1);
+      pointer-events: auto;
+    }
+
+    /* ── Chat bubbles ─────────────────────────────────────────────── */
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      animation: fadeUp 0.22s ease;
+      max-width: 720px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .bubble-user {
+      align-self: flex-end;
+      max-width: 72%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius) var(--radius) 3px var(--radius);
+      padding: 10px 16px;
+      font-size: 14px;
+      color: var(--amber);
+      word-break: break-word;
+    }
+
+    .bubble-assistant {
+      align-self: flex-start;
+      max-width: 92%;
+      width: 100%;
+    }
+
+    .bubble-assistant-inner {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 3px var(--radius) var(--radius) var(--radius);
+      padding: 12px 16px;
+      transition: background var(--transition);
+    }
+
+    .bubble-text {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .bubble-text .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--amber);
+      animation: blink 0.8s infinite;
+      vertical-align: text-bottom;
+      margin-left: 2px;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* Markdown */
+    .bubble-text p {
+      margin-bottom: 0.3em;
+    }
+
+    .bubble-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    .bubble-text ul,
+    .bubble-text ol {
+      padding-left: 20px;
+      margin-bottom: 0.3em;
+    }
+
+    .bubble-text code {
+      font-size: 12px;
+      background: var(--bg3);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    .bubble-text pre {
+      background: var(--bg3);
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      margin-bottom: 0.3em;
+    }
+
+    .bubble-text pre code {
+      background: none;
+      padding: 0;
+    }
+
+    .bubble-text h1,
+    .bubble-text h2,
+    .bubble-text h3 {
+      margin: 0.25em 0 0.05em;
+      font-weight: 600;
+    }
+
+    .bubble-text .katex-display {
+      overflow-x: auto;
+      padding: 4px 0;
+    }
+
+    .latex-error {
+      color: var(--red);
+      font-size: 0.85em;
+    }
+
+    /* ── Input area ───────────────────────────────────────────────── */
+    /* In hero-mode: the input floats centered vertically in the page */
+    #input-area {
+      flex-shrink: 0;
+      padding: 10px 16px 0;
+      background: var(--bg);
+      transition: background var(--transition);
+    }
+
+    #app.hero-mode #input-area {
+      /* In hero mode, input is rendered inside hero-center flow */
+      /* We keep the DOM element here but visually it will be placed below hero-center */
+      /* Actually simpler: we use a separate positioned wrapper for hero mode */
+      /* See hero-input-wrap below */
+      display: none;
+    }
+
+    /* Hero-mode input positioned inside page flow */
+    #hero-input-wrap {
+      align-self: stretch;
+      /* Force stretch in parent flex container */
+      width: 100%;
+      max-width: 720px;
+      margin: 28px auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    #app:not(.hero-mode) #hero-input-wrap {
+      display: none;
+      /* not shown in chat mode */
+    }
+
+    /* Shared inner wrap */
+    #send-row-hero,
+    #send-row {
+      display: flex;
+      width: 100%;
+      gap: 8px;
+      align-items: center;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: var(--radius);
+      padding: 8px 10px 8px 18px;
+      box-shadow: var(--shadow-big);
+      transition: border-color 0.2s, background var(--transition), box-shadow 0.2s;
+    }
+
+    #send-row-hero:focus-within,
+    #send-row:focus-within {
+      border-color: var(--amber-dim);
+      box-shadow: 0 0 0 3px var(--amber-glow), var(--shadow-big);
+    }
+
+    #query-input-hero,
+    #query-input {
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      outline: none;
+      -webkit-appearance: none;
+      line-height: 1.5;
+      padding: 4px 0;
+    }
+
+    @media (min-width: 480px) {
+
+      #query-input-hero,
+      #query-input {
+        font-size: 14px;
+      }
+    }
+
+    #query-input-hero::placeholder,
+    #query-input::placeholder {
+      color: var(--text-dim);
+    }
+
+    /* Chat mode wrap */
+    #chat-input-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .icon-btn {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .icon-btn:hover {
+      background: var(--bg3);
+      color: var(--text);
+    }
+
+    .btn-send-circle {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: var(--amber);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, opacity 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-send-circle:hover {
+      background: var(--amber-dim);
+    }
+
+    .btn-send-circle:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* ── Bio footer link ──────────────────────────────────────────── */
+    #bio-footer {
+      text-align: center;
+      padding: 10px 16px 16px;
+      flex-shrink: 0;
+      background: var(--bg);
+      transition: background var(--transition);
+    }
+
+    .bio-link {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .bio-link:hover {
+      color: var(--amber);
+    }
+
+    .bio-link svg {
+      opacity: 0.6;
+    }
 
 
 
-  .hero-avatar-quote {
-    font-size: 13px;
-    color: var(--text-dim);
-    font-style: italic;
-    margin-bottom: 6px;
-    letter-spacing: 0.01em;
-  }
+    /* ── Scrollbar ──────────────────────────────────────────────────── */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
 
-  .hero-title {
-    font-size: 26px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.01em;
-    margin-bottom: 8px;
-  }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
 
-  @media (max-width: 480px) {
-    .hero-title { font-size: 20px; }
-  }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
 
-  /* Bio link */
-  .hero-bio-link {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text);
-    text-decoration: none;
-    letter-spacing: 0.02em;
-    margin-bottom: 32px;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-  }
+    /* ── Misc ─────────────────────────────────────────────────────── */
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--border);
+      border-top-color: var(--amber);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
 
-  .hero-bio-link:hover { color: var(--amber); }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
+    .hidden {
+      display: none !important;
+    }
 
+    /* ── Toast ────────────────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 16px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
 
-  /* ── Chat bubbles ─────────────────────────────────────────────── */
-  .turn { display: flex; flex-direction: column; gap: 6px; animation: fadeUp 0.2s ease; max-width: 760px; width: 100%; margin: 0 auto; }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;} }
+    .toast-msg {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      animation: toastIn 0.2s ease;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
 
-  .bubble-user {
-    align-self: flex-end;
-    max-width: 72%;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: var(--radius) var(--radius) 3px var(--radius);
-    padding: 10px 16px;
-    font-size: 14px;
-    color: var(--amber);
-    word-break: break-word;
-  }
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
 
-  .bubble-assistant { align-self: flex-start; max-width: 92%; width: 100%; }
-  .bubble-assistant-inner {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 3px var(--radius) var(--radius) var(--radius);
-    padding: 10px 14px;
-    transition: background 0.25s;
-  }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
 
-  .bubble-text { font-size: 14px; line-height: 1.5; color: var(--text); white-space: pre-wrap; word-break: break-word; }
-  .bubble-text .cursor { display: inline-block; width: 2px; height: 1em; background: var(--amber); animation: blink 0.8s infinite; vertical-align: text-bottom; margin-left: 2px; }
-  @keyframes blink { 0%,100%{opacity:1;}50%{opacity:0;} }
+    /* ── Mobile tweaks ────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .hero-greeting {
+        font-size: 14px;
+      }
 
+      .hero-sub {
+        font-size: 12px;
+      }
 
+      .hero-name {
+        font-size: 15px;
+      }
 
-  /* ── Bottom input bar ─────────────────────────────────────────── */
-  #input-area {
-    flex-shrink: 0;
-    padding: 12px 16px 20px;
-    background: var(--bg);
-    transition: background 0.25s;
-  }
+      .hero-avatar {
+        width: 88px;
+        height: 88px;
+      }
 
-  #input-wrap {
-    max-width: 760px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
+      #thread {
+        padding: 14px 12px 10px;
+      }
 
+      .bubble-user {
+        max-width: 88%;
+      }
 
+      .bubble-assistant {
+        max-width: 100%;
+      }
 
-  /* Main input row */
-  #send-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    background: var(--input-bg);
-    border: 1px solid var(--input-border);
-    border-radius: var(--radius);
-    padding: 6px 8px 6px 16px;
-    box-shadow: var(--shadow);
-    transition: border-color 0.2s, background 0.25s;
-  }
+      #floating-avatar {
+        width: 36px;
+        height: 36px;
+        top: calc(var(--header-h) + 8px);
+        right: 12px;
+      }
 
-  #send-row:focus-within {
-    border-color: var(--amber-dim);
-  }
-
-  #query-input {
-    flex: 1;
-    min-width: 0;
-    background: transparent;
-    border: none;
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 15px;
-    outline: none;
-    -webkit-appearance: none;
-    line-height: 1.5;
-    padding: 4px 0;
-  }
-
-  @media (min-width: 480px) { #query-input { font-size: 14px; } }
-  #query-input::placeholder { color: var(--text-dim); }
-
-  .icon-btn {
-    flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: none;
-    background: transparent;
-    color: var(--text-dim);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s, color 0.15s;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .icon-btn:hover { background: var(--bg3); color: var(--text); }
-
-  .btn-send-circle {
-    flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: none;
-    background: var(--amber);
-    color: #fff;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s, opacity 0.15s;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .btn-send-circle:hover { background: var(--amber-dim); }
-  .btn-send-circle:disabled { opacity: 0.4; cursor: not-allowed; }
-
-
-
-  /* ── Scrollbar ────────────────────────────────────────────────── */
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-  /* ── Misc ─────────────────────────────────────────────────────── */
-  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--amber); border-radius: 50%; animation: spin 0.7s linear infinite; }
-  @keyframes spin { to{transform:rotate(360deg);} }
-  .hidden { display: none !important; }
-
-  .bubble-text .katex-display { overflow-x: auto; padding: 4px 0; }
-  .latex-error { color: var(--red); font-size: 0.85em; }
-
-  /* Markdown inside bubbles */
-  .bubble-text p { margin-bottom: 0.3em; }
-  .bubble-text p:last-child { margin-bottom: 0; }
-  .bubble-text ul, .bubble-text ol { padding-left: 20px; margin-bottom: 0.3em; }
-  .bubble-text code { font-size: 12px; background: var(--bg3); padding: 1px 5px; border-radius: 4px; }
-  .bubble-text pre { background: var(--bg3); padding: 10px 12px; border-radius: var(--radius-sm); overflow-x: auto; margin-bottom: 0.3em; }
-  .bubble-text pre code { background: none; padding: 0; }
-  .bubble-text h1, .bubble-text h2, .bubble-text h3 { margin: 0.25em 0 0.05em; font-weight: 600; }
-</style>
+      #toast {
+        bottom: 24px;
+        left: 16px;
+        right: 16px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div id="app">
+  <div id="app" class="hero-mode">
 
-  <!-- ── Header ──────────────────────────────────────────────────── -->
-  <header id="header">
-    <div class="logo"><span>BHAGWAN CHOWDHRY</span></div>
-    <div id="server-status">
-      <span id="server-status-text">connecting…</span>
-    </div>
-
-
-    <div id="theme-toggle-wrap">
-      <span class="theme-label" id="theme-label">Dark</span>
-      <button id="theme-toggle" aria-label="Toggle dark/light mode" onclick="toggleTheme()"></button>
-    </div>
-  </header>
-
-  <!-- ── Main ────────────────────────────────────────────────────── -->
-  <div id="main">
-
-    <!-- Thread -->
-    <div id="thread">
-      <!-- Hero / Welcome state -->
-      <div id="thread-empty">
-        <img src="Bhagwan.jpeg" class="hero-avatar" alt="Professor Bhagwan Chowdhry">
-        <div class="hero-title">Professor Bhagwan Chowdhry</div>
-      
-        <div class="hero-avatar-quote">Hello, I am not Bhagwan<br>I am his Avatar!</div>
-        <a class="hero-bio-link" href="https://bhag.one/" target="_blank" rel="noopener">Prof. Bhagwan Chowdhry biography ↗</a>
-
-
+    <!-- ── Header ──────────────────────────────────────────────────── -->
+    <header id="header">
+      <!-- <div class="logo">Hello, I am not Bhagwan — I am his Avatar! <span>(I answer questions as closely as he would. He has tested it extensively)</span> </div> -->
+      <div id="server-status">
+        <span id="server-status-text">connecting…</span>
       </div>
-    </div>
+      <div id="theme-toggle-wrap">
+        <span class="theme-label" id="theme-label">Dark</span>
+        <button id="theme-toggle" aria-label="Toggle dark/light mode" onclick="toggleTheme()"></button>
+      </div>
+    </header>
 
-    <!-- Input area -->
-    <div id="input-area">
-      <div id="input-wrap">
+    <!-- ── Main area ─────────────────────────────────────────────── -->
+    <div id="main">
 
+      <!-- HERO CENTER (shown before first message) -->
+      <div id="hero-center">
 
+        <img src="Bhagwan.jpeg" id="hero-img" class="hero-avatar" alt="Professor Bhagwan Chowdhry">
 
-        <!-- Main send row -->
-        <div id="send-row">
+        <div class="hero-name">Bhagwan Chowdhry</div>
 
-          <input id="query-input" type="text"
-                 placeholder="Ask anything"
-                 onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendMessage()"/>
+        <div class="hero-greeting">Hello, I am not Bhagwan — I am his Avatar!</div>
 
-          <!-- Mic icon -->
-          <button class="icon-btn" aria-label="Voice input">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <rect x="9" y="2" width="6" height="12" rx="3"/>
-              <path d="M5 10a7 7 0 0014 0"/>
-              <line x1="12" y1="19" x2="12" y2="22"/>
-            </svg>
-          </button>
+        <div class="hero-sub">I answer questions just like he does.<br>
+          He has tested it extensively</div>
 
-          <!-- Send button -->
-          <button class="btn-send-circle" id="btn-send" onclick="sendMessage()">
-            <span id="btn-spinner" class="spinner hidden"></span>
-            <svg id="btn-arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <line x1="12" y1="19" x2="12" y2="5"/>
-              <polyline points="5 12 12 5 19 12"/>
-            </svg>
-          </button>
+        <!-- Hero-mode input bar (centered) -->
+        <div id="hero-input-wrap">
+          <div id="send-row-hero">
+            <input id="query-input-hero" type="text" placeholder="Ask me anything"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendMessage('hero')" />
+
+            <button class="btn-send-circle" id="btn-send-hero" onclick="sendMessage('hero')">
+              <span id="btn-spinner-hero" class="spinner hidden"></span>
+              <svg id="btn-arrow-hero" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"
+                viewBox="0 0 24 24">
+                <line x1="12" y1="19" x2="12" y2="5" />
+                <polyline points="5 12 12 5 19 12" />
+              </svg>
+            </button>
+          </div>
         </div>
 
+      </div><!-- /#hero-center -->
 
+      <!-- THREAD (shown during chat) -->
+      <div id="thread"></div>
+
+      <!-- Chat-mode input area -->
+      <div id="input-area">
+        <div id="chat-input-wrap">
+          <div id="send-row">
+            <input id="query-input" type="text" placeholder="Ask me anything"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendMessage('chat')" />
+            <button class="btn-send-circle" id="btn-send" onclick="sendMessage('chat')">
+              <span id="btn-spinner" class="spinner hidden"></span>
+              <svg id="btn-arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"
+                viewBox="0 0 24 24">
+                <line x1="12" y1="19" x2="12" y2="5" />
+                <polyline points="5 12 12 5 19 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
+
+    </div><!-- /#main -->
+
+    <!-- ── Bio footer — always visible ──────────────────────────── -->
+    <div id="bio-footer">
+      <a class="bio-link" href="https://bhag.one/" target="_blank" rel="noopener">
+        Prof. Bhagwan Chowdhry website
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+          <polyline points="15 3 21 3 21 9" />
+          <line x1="10" y1="14" x2="21" y2="3" />
+        </svg>
+      </a>
     </div>
 
-  </div><!-- /#main -->
-</div><!-- /#app -->
+  </div><!-- /#app -->
 
+  <!-- Floating avatar (chat mode) -->
+  <img src="Bhagwan.jpeg" id="floating-avatar" alt="Bhagwan's Avatar" title="You are talking to Bhagwan's AI Avatar">
 
+  <div id="toast"></div>
 
-<script>
-/* ── Config ─────────────────────────────────────────────────────── */
-const API = 'https://profile-rag.onrender.com';
+  <script>
+    /* ── Config ─────────────────────────────────────────────────────── */
+    const API = 'https://profile-rag.onrender.com';
 
+    const DEFAULT_SYSTEM_PROMPT = `
+Speak as Bhagwan Chowdhry, a finance professor with genuine intellectual enthusiasm and deep concern for human welfare. Begin with personal anecdotes or credentials that establish your connection to the topic, creating intimacy through conversational authority. Structure arguments by moving from specific experience to broader principle to future implications. Use medium-length sentences (15-25 words) mixed with short, punchy declaratives for emphasis. Employ em-dashes generously for clarifying asides and rhetorical questions to engage readers. Ground every abstract claim in concrete examples—specific numbers, named people, places, and personal observations. Favor active voice and confident declaratives like 'nothing short of revolutionary' or 'completely serious.' Explain technical terms naturally without jargon. Weave personal narrative throughout rather than front-loading it. Connect abstract topics to human welfare, especially the poor and marginalized. Show measured optimism about solutions while remaining realistic about challenges. Propose specific, actionable ideas rather than vague principles. Acknowledge limitations humbly while asserting expertise. End with future-focused projections that inspire action. Vary paragraph length (3-7 sentences) with clear topic sentences and explicit transitions. Let substance create emphasis rather than formatting tricks. Sprinkle a little humor, now and then.
+You represent his portfolio and answer questions on his behalf to visitors, students, and collaborators.
+About Bhagwan Chowdhry:
+Bhagwan Chowdhry is a Professor of Finance at the Indian School of Business and Research Professor at UCLA Anderson where he has held an appointment since 1988. He is the Executive Director of the Digital Identity Research Initiative (DIRI) and Faculty Director of I-Venture at ISB.
+He has taught at the University of Chicago, University of Illinois at Chicago, and HKUST. He received his PhD from the University of Chicago Booth School of Business, an MBA in Finance from the University of Iowa, and a BTech in Mechanical Engineering from IIT Kanpur.
+His research covers International Finance, Corporate Finance, Impact Investing, and FinTech. He has proposed the Financial Access at Birth (FAB) initiative, where every child born is given an initial deposit of $100 in an online bank account. He co-authored the book FinTech for Billions: Simple, Human, Ubiquitous.
 
+Rules:
+- Answer ONLY from the provided context.
+- If the answer is not in context, say so clearly. Do not use the word "context" in your responses.
+- Remember the conversation history and refer back to previous answers when relevant.
+- Be concise but complete.
+- If an answer is long, engage in a conversation instead of giving the long answer all at once.`;
 
-/* ── Session ────────────────────────────────────────────────────── */
-let SESSION_ID = crypto.randomUUID();
+    /* ── State ──────────────────────────────────────────────────────── */
+    let SESSION_ID = crypto.randomUUID();
+    let chatStarted = false;
 
-/* ── Theme ──────────────────────────────────────────────────────── */
-function toggleTheme() {
-  const html = document.documentElement;
-  const isDark = html.getAttribute('data-theme') === 'dark';
-  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  document.getElementById('theme-label').textContent = isDark ? 'Light' : 'Dark';
-  try { localStorage.setItem('theme', isDark ? 'light' : 'dark'); } catch {}
-}
-
-(function initTheme() {
-  try {
-    const saved = localStorage.getItem('theme');
-    if (saved) {
-      document.documentElement.setAttribute('data-theme', saved);
-      document.getElementById('theme-label').textContent = saved === 'dark' ? 'Dark' : 'Light';
+    /* ── Fill query from chip ────────────────────────────────────────── */
+    function fillQuery(text) {
+      const inp = document.getElementById('query-input-hero');
+      inp.value = text;
+      inp.focus();
     }
-  } catch {}
-})();
 
+    /* ── Transition from hero → chat mode ───────────────────────────── */
+    function enterChatMode() {
+      if (chatStarted) return;
+      chatStarted = true;
 
+      const app = document.getElementById('app');
 
+      // Get initial position of hero input
+      const heroRow = document.getElementById('send-row-hero');
+      const firstRect = heroRow.getBoundingClientRect();
 
+      // Change state
+      app.classList.remove('hero-mode');
 
+      // Get final position of chat input 
+      const chatRow = document.getElementById('send-row');
+      const lastRect = chatRow.getBoundingClientRect();
 
-/* ── Stats / Status ─────────────────────────────────────────────── */
-async function refreshStats() {
-  try {
-    const r = await fetch(`${API}/stats`);
-    if (!r.ok) { setStatus(false); return; }
-    setStatus(true);
-  } catch { setStatus(false); }
-}
+      // Calculate differences for FLIP animation
+      const deltaX = firstRect.left - lastRect.left;
+      const deltaY = firstRect.top - lastRect.top;
+      const scaleX = firstRect.width / lastRect.width;
+      const scaleY = firstRect.height / lastRect.height;
 
-function setStatus(ok) {
-  const el = document.getElementById('server-status-text');
-  if (!el) return;
-  el.textContent = ok ? '● online' : '○ offline';
-  el.style.color = ok ? 'var(--green)' : 'var(--red)';
-}
+      // Invert: Move chat box to match hero box position temporarily
+      chatRow.style.transition = 'none';
+      chatRow.style.transformOrigin = 'top left';
+      chatRow.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})`;
 
+      // Show floating avatar
+      const fa = document.getElementById('floating-avatar');
+      fa.style.display = 'block';
 
-/* ── Busy state ─────────────────────────────────────────────────── */
-function setBusy(busy) {
-  document.getElementById('btn-send').disabled      = busy;
-  document.getElementById('query-input').disabled   = busy;
-  document.getElementById('btn-spinner').classList.toggle('hidden', !busy);
-  document.getElementById('btn-arrow').classList.toggle('hidden', busy);
-}
+      // Play: Animate from inverted position to natural position
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          chatRow.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+          chatRow.style.transform = 'none';
 
-/* ── Send message ───────────────────────────────────────────────── */
-async function sendMessage() {
-  const question = document.getElementById('query-input').value.trim();
-  if (!question) return;
-  document.getElementById('query-input').value = '';
-  document.getElementById('query-input').blur();
+          fa.classList.add('visible');
+        });
+      });
+    }
 
-  // Remove hero on first message
-  const emptyEl = document.getElementById('thread-empty');
-  if (emptyEl) emptyEl.remove();
+    /* ── Theme ──────────────────────────────────────────────────────── */
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('theme-label').textContent = isDark ? 'Light' : 'Dark';
+      try { localStorage.setItem('theme', isDark ? 'light' : 'dark'); } catch { }
+    }
 
-  setBusy(true);
+    (function initTheme() {
+      try {
+        const saved = localStorage.getItem('theme');
+        if (saved) {
+          document.documentElement.setAttribute('data-theme', saved);
+          document.getElementById('theme-label').textContent = saved === 'dark' ? 'Dark' : 'Light';
+        }
+      } catch { }
+    })();
 
+    /* ── Stats / Status ─────────────────────────────────────────────── */
+    async function refreshStats() {
+      try {
+        const r = await fetch(`${API}/stats`);
+        if (!r.ok) { setStatus(false); return; }
+        setStatus(true);
+      } catch { setStatus(false); }
+    }
 
-  const thread = document.getElementById('thread');
+    function setStatus(ok) {
+      const el = document.getElementById('server-status-text');
+      if (!el) return;
+      el.textContent = ok ? '● online' : '○ offline';
+      el.style.color = ok ? 'var(--green)' : 'var(--red)';
+    }
 
-  // User bubble
-  const userTurn = document.createElement('div');
-  userTurn.className = 'turn';
-  userTurn.innerHTML = `<div class="bubble-user">${escapeHtml(question)}</div>`;
-  thread.appendChild(userTurn);
+    /* ── Busy state ─────────────────────────────────────────────────── */
+    function setBusy(busy) {
+      // Hero mode buttons
+      const bsh = document.getElementById('btn-send-hero');
+      const bss = document.getElementById('btn-spinner-hero');
+      const bah = document.getElementById('btn-arrow-hero');
+      const qi = document.getElementById('query-input-hero');
+      if (bsh) bsh.disabled = busy;
+      if (bss) bss.classList.toggle('hidden', !busy);
+      if (bah) bah.classList.toggle('hidden', busy);
+      if (qi) qi.disabled = busy;
 
-  // Assistant bubble
-  const asstTurn = document.createElement('div');
-  asstTurn.className = 'turn';
-  asstTurn.innerHTML = `
+      // Chat mode buttons
+      const bs = document.getElementById('btn-send');
+      const bsp = document.getElementById('btn-spinner');
+      const ba = document.getElementById('btn-arrow');
+      const qic = document.getElementById('query-input');
+      if (bs) bs.disabled = busy;
+      if (bsp) bsp.classList.toggle('hidden', !busy);
+      if (ba) ba.classList.toggle('hidden', busy);
+      if (qic) qic.disabled = busy;
+    }
+
+    /* ── Clear / new chat ───────────────────────────────────────────── */
+    async function clearChat() {
+      try { await fetch(`${API}/sessions/${SESSION_ID}`, { method: 'DELETE' }); } catch { }
+      SESSION_ID = crypto.randomUUID();
+      chatStarted = false;
+
+      // Reset to hero mode
+      const app = document.getElementById('app');
+      app.classList.add('hero-mode');
+
+      // Hide floating avatar
+      const fa = document.getElementById('floating-avatar');
+      fa.classList.remove('visible');
+      fa.style.display = 'none';
+
+      // Clear thread
+      document.getElementById('thread').innerHTML = '';
+
+      // Clear hero input
+      const hi = document.getElementById('query-input-hero');
+      if (hi) hi.value = '';
+    }
+
+    /* ── Send message ───────────────────────────────────────────────── */
+    async function sendMessage(mode) {
+      // Get question from the right input
+      const inputId = mode === 'hero' ? 'query-input-hero' : 'query-input';
+      const inputEl = document.getElementById(inputId);
+      const question = inputEl.value.trim();
+      if (!question) return;
+
+      inputEl.value = '';
+      inputEl.blur();
+
+      // Transition to chat mode if first message
+      enterChatMode();
+
+      // Small delay to let layout settle, then autofocus chat input
+      setTimeout(() => {
+        const ci = document.getElementById('query-input');
+        if (ci) ci.focus();
+      }, 350);
+
+      setBusy(true);
+
+      const thread = document.getElementById('thread');
+
+      // User bubble
+      const userTurn = document.createElement('div');
+      userTurn.className = 'turn';
+      userTurn.innerHTML = `<div class="bubble-user">${escapeHtml(question)}</div>`;
+      thread.appendChild(userTurn);
+
+      // Assistant bubble
+      const asstTurn = document.createElement('div');
+      asstTurn.className = 'turn';
+      asstTurn.innerHTML = `
     <div class="bubble-assistant">
       <div class="bubble-assistant-inner">
         <div class="bubble-text" id="current-bubble"><span class="cursor"></span></div>
       </div>
     </div>`;
-  thread.appendChild(asstTurn);
-  scrollThread();
-
-  const params = new URLSearchParams({
-    question,
-    session_id:    SESSION_ID,
-  });
-
-  const textEl = document.getElementById('current-bubble');
-  let fullText = '';
-
-  try {
-    const es = new EventSource(`${API}/query/stream?${params}`);
-
-    es.addEventListener('token', e => {
-      fullText += JSON.parse(e.data);
-      textEl.innerHTML = renderMd(fullText);
-      applyKatex(textEl);
-      const cur = document.createElement('span');
-      cur.className = 'cursor';
-      textEl.appendChild(cur);
+      thread.appendChild(asstTurn);
       scrollThread();
-    });
 
-    es.addEventListener('done', e => {
-      const meta = JSON.parse(e.data);
-      textEl.innerHTML = renderMd(fullText);
-      applyKatex(textEl);
-      textEl.removeAttribute('id');
-      setBusy(false);
-      es.close();
-    });
+      const params = new URLSearchParams({
+        question,
+        session_id: SESSION_ID,
+        top_k: '10',
+        system_prompt: DEFAULT_SYSTEM_PROMPT,
+        ...(document.getElementById('cfg-section')?.value && { section_filter: document.getElementById('cfg-section').value }),
+      });
 
-    es.addEventListener('error', e => {
-      const msg = e.data ? JSON.parse(e.data) : 'Stream error';
+      const textEl = document.getElementById('current-bubble');
+      let fullText = '';
 
-      textEl.innerHTML = fullText ? renderMd(fullText) : '<em style="color:var(--red)">Error</em>';
-      applyKatex(textEl);
-      textEl.removeAttribute('id');
-      setBusy(false);
-      es.close();
-    });
+      try {
+        const es = new EventSource(`${API}/query/stream?${params}`);
 
-    es.onerror = () => {
-      if (es.readyState === EventSource.CLOSED) return;
-      console.error('Connection lost');
-      setBusy(false);
-      es.close();
-    };
-  } catch(e) {
-    console.error('Query failed: ', e);
-    setBusy(false);
-  }
-}
+        es.addEventListener('token', e => {
+          fullText += JSON.parse(e.data);
+          textEl.innerHTML = renderMd(fullText);
+          applyKatex(textEl);
+          const cur = document.createElement('span');
+          cur.className = 'cursor';
+          textEl.appendChild(cur);
+          scrollThread();
+        });
 
-function scrollThread() {
-  const t = document.getElementById('thread');
-  t.scrollTop = t.scrollHeight;
-}
+        es.addEventListener('done', e => {
+          textEl.innerHTML = renderMd(fullText);
+          applyKatex(textEl);
+          textEl.removeAttribute('id');
+          setBusy(false);
+          es.close();
+        });
 
+        es.addEventListener('error', e => {
+          textEl.innerHTML = fullText ? renderMd(fullText) : '<em style="color:var(--red)">Error receiving response.</em>';
+          applyKatex(textEl);
+          textEl.removeAttribute('id');
+          setBusy(false);
+          es.close();
+        });
 
-
-
-function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function escapeAttr(s) { return String(s||'').replace(/"/g,'&quot;'); }
-
-/* ── Markdown + LaTeX ───────────────────────────────────────────── */
-function renderMd(text) {
-  const stash = [];
-  function hide(raw, display) {
-    const id = '\x02' + stash.length + '\x03';
-    stash.push({ id, raw, display });
-    return id;
-  }
-  let s = text.replace(/\$\$([\s\S]+?)\$\$/g,   (_, m) => hide('$$' + m + '$$', true));
-  s = s.replace(/\\\[([\s\S]+?)\\\]/g,           (_, m) => hide('\\[' + m + '\\]', true));
-  s = s.replace(/\\\(([\s\S]+?)\\\)/g,           (_, m) => hide('\\(' + m + '\\)', false));
-  s = s.replace(/\$([^\s$\n][^$\n]*?[^\s$\n]|\S)\$/g, (_, m) => hide('$' + m + '$', false));
-  let html = marked.parse(s, { breaks: true, gfm: true });
-  for (const { id, raw, display } of stash) {
-    const esc = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    html = html.replace(id, `<span class="latex-pending" data-display="${display}" data-raw="${esc}"></span>`);
-  }
-  return html;
-}
-
-function applyKatex(el) {
-  el.querySelectorAll('span.latex-pending').forEach(span => {
-    const display = span.dataset.display === 'true';
-    const raw = span.dataset.raw
-      .replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-      .replace(/&gt;/g,'>').replace(/&quot;/g,'"');
-    const inner = raw
-      .replace(/^\$\$([\s\S]*)\$\$$/, '$1')
-      .replace(/^\\\[([\s\S]*)\\\]$/, '$1')
-      .replace(/^\\\(([\s\S]*)\\\)$/, '$1')
-      .replace(/^\$([\s\S]*)\$$/, '$1');
-    try {
-      span.outerHTML = katex.renderToString(inner, { displayMode: display, throwOnError: false, trust: false });
-    } catch(e) {
-      span.textContent = raw;
-      span.className = 'latex-error';
+        es.onerror = () => {
+          if (es.readyState === EventSource.CLOSED) return;
+          setBusy(false);
+          es.close();
+        };
+      } catch (e) {
+        console.error('Query failed:', e);
+        setBusy(false);
+      }
     }
-  });
-}
 
-/* ── Init ───────────────────────────────────────────────────────── */
-refreshStats();
-setInterval(refreshStats, 8000);
-</script>
+    function scrollThread() {
+      const t = document.getElementById('thread');
+      t.scrollTop = t.scrollHeight;
+    }
+
+    function escapeHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    function escapeAttr(s) { return String(s || '').replace(/"/g, '&quot;'); }
+
+    /* ── Markdown + LaTeX ───────────────────────────────────────────── */
+    function renderMd(text) {
+      const stash = [];
+      function hide(raw, display) {
+        const id = '\x02' + stash.length + '\x03';
+        stash.push({ id, raw, display });
+        return id;
+      }
+      let s = text.replace(/\$\$([\s\S]+?)\$\$/g, (_, m) => hide('$$' + m + '$$', true));
+      s = s.replace(/\\\[([\s\S]+?)\\\]/g, (_, m) => hide('\\[' + m + '\\]', true));
+      s = s.replace(/\\\(([\s\S]+?)\\\)/g, (_, m) => hide('\\(' + m + '\\)', false));
+      s = s.replace(/\$([^\s$\n][^$\n]*?[^\s$\n]|\S)\$/g, (_, m) => hide('$' + m + '$', false));
+      let html = marked.parse(s, { breaks: true, gfm: true });
+      for (const { id, raw, display } of stash) {
+        const esc = raw.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        html = html.replace(id, `<span class="latex-pending" data-display="${display}" data-raw="${esc}"></span>`);
+      }
+      return html;
+    }
+
+    function applyKatex(el) {
+      el.querySelectorAll('span.latex-pending').forEach(span => {
+        const display = span.dataset.display === 'true';
+        const raw = span.dataset.raw
+          .replace(/&amp;/g, '&').replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+        const inner = raw
+          .replace(/^\$\$([\s\S]*)\$\$$/, '$1')
+          .replace(/^\\\[([\s\S]*)\\\]$/, '$1')
+          .replace(/^\\\(([\s\S]*)\\\)$/, '$1')
+          .replace(/^\$([\s\S]*)\$$/, '$1');
+        try {
+          span.outerHTML = katex.renderToString(inner, { displayMode: display, throwOnError: false, trust: false });
+        } catch (e) {
+          span.textContent = raw;
+          span.className = 'latex-error';
+        }
+      });
+    }
+
+    function toast(msg, type = 'info') {
+      const el = document.createElement('div');
+      el.className = `toast-msg`;
+      el.textContent = msg;
+      document.getElementById('toast').appendChild(el);
+      setTimeout(() => el.remove(), 3500);
+    }
+
+    /* ── Init ───────────────────────────────────────────────────────── */
+    refreshStats();
+    setInterval(refreshStats, 8000);
+  </script>
 </body>
+
 </html>
