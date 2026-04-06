@@ -263,34 +263,31 @@
       margin-bottom: 12px;
       letter-spacing: 0.01em;
     }
+#floating-avatar {
+  position: fixed;
+  top: calc(var(--header-h) + 14px);
+  left: 16px;
+  right: auto;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  object-fit: cover;
+  box-shadow: var(--shadow-big);
+  z-index: 15;
+  opacity: 0;
+  transform: translate(-44vw, 28vh) scale(3);
+  transition: opacity 0.5s ease, transform 0.7s cubic-bezier(0.34, 1.05, 0.64, 1);
+  pointer-events: none;
+  display: none;
+}
 
-    /* ── Floating avatar (chat mode — top-right corner) ────────────── */
-    #floating-avatar {
-      position: fixed;
-      top: calc(var(--header-h) + 14px);
-      right: 16px;
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      object-fit: cover;
-      box-shadow: var(--shadow-big);
-      z-index: 15;
-      /* Start: large, centered on screen */
-      opacity: 0;
-      transform: translate(-44vw, 28vh) scale(3);
-      transition: opacity 0.5s ease, transform 0.7s cubic-bezier(0.34, 1.05, 0.64, 1);
-      pointer-events: none;
-      display: none;
-    }
-
-    #floating-avatar.visible {
-      display: block;
-      opacity: 1;
-      /* End: small, top-right */
-      transform: translate(0, 0) scale(1);
-      pointer-events: auto;
-    }
+#floating-avatar.visible {
+  display: block;
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+  pointer-events: auto;
+}
 
     /* ── Chat bubbles ─────────────────────────────────────────────── */
     .turn {
@@ -695,12 +692,15 @@
         max-width: 100%;
       }
 
-      #floating-avatar {
-        width: 36px;
-        height: 36px;
-        top: calc(var(--header-h) + 8px);
-        right: 12px;
-      }
+
+  #floating-avatar {
+    width: 36px;
+    height: 36px;
+    top: calc(var(--header-h) + 8px);
+    left: 12px;
+    right: auto;
+  }
+
 
       #toast {
         bottom: 24px;
