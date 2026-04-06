@@ -562,7 +562,7 @@
     /* ── Bio footer link ──────────────────────────────────────────── */
     #bio-footer {
       text-align: center;
-      padding: 10px 16px 16px;
+      padding: 4px 16px 8px;
       flex-shrink: 0;
       background: var(--bg);
       transition: background var(--transition);
@@ -717,7 +717,7 @@
 
     <!-- ── Header ──────────────────────────────────────────────────── -->
     <header id="header">
-      <div class="logo">Bhagwan Chowdhry</div>
+      <div class="logo">Prof. Bhagwan Chowdhry</div>
       <div id="server-status">
         <span id="server-status-text">connecting…</span>
       </div>
@@ -786,7 +786,7 @@
     <!-- ── Bio footer — always visible ──────────────────────────── -->
     <div id="bio-footer">
       <a class="bio-link" href="https://bhag.one/" target="_blank" rel="noopener">
-        Prof. Bhagwan Chowdhry website
+        website
         <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
           <polyline points="15 3 21 3 21 9" />
@@ -1020,7 +1020,7 @@ Rules:
           const cur = document.createElement('span');
           cur.className = 'cursor';
           textEl.appendChild(cur);
-          scrollThread();
+          // Removed tracking scroll so window stays in user's position
         });
 
         es.addEventListener('done', e => {
