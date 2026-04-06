@@ -276,18 +276,18 @@
   box-shadow: var(--shadow-big);
   z-index: 15;
   opacity: 0;
-  transform: translate(-44vw, 28vh) scale(3);
-  transition: opacity 0.5s ease, transform 0.7s cubic-bezier(0.34, 1.05, 0.64, 1);
-  pointer-events: none;
   display: none;
+  pointer-events: none;
+  transform-origin: top left;
+  will-change: transform, opacity;
+  transition: opacity 0.35s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 #floating-avatar.visible {
-  display: block;
   opacity: 1;
-  transform: translate(0, 0) scale(1);
   pointer-events: auto;
 }
+
 
     /* ── Chat bubbles ─────────────────────────────────────────────── */
     .turn {
@@ -692,7 +692,6 @@
         max-width: 100%;
       }
 
-
   #floating-avatar {
     width: 36px;
     height: 36px;
@@ -700,6 +699,7 @@
     left: 12px;
     right: auto;
   }
+
 
 
       #toast {
@@ -832,50 +832,68 @@ Rules:
       inp.focus();
     }
 
-    /* ── Transition from hero → chat mode ───────────────────────────── */
     function enterChatMode() {
-      if (chatStarted) return;
-      chatStarted = true;
+  if (chatStarted) return;
+  chatStarted = true;
 
-      const app = document.getElementById('app');
+  const app = document.getElementById('app');
+  const heroImg = document.getElementById('hero-img');
+  const fa = document.getElementById('floating-avatar');
 
-      // Get initial position of hero input
-      const heroRow = document.getElementById('send-row-hero');
-      const firstRect = heroRow.getBoundingClientRect();
+  // Measure the hero avatar before layout changes
+  const firstRect = heroImg.getBoundingClientRect();
 
-      // Change state
-      app.classList.remove('hero-mode');
+  // Switch layout first so the floating avatar gets its final top-left position
+  app.classList.remove('hero-mode');
 
-      // Get final position of chat input 
-      const chatRow = document.getElementById('send-row');
-      const lastRect = chatRow.getBoundingClientRect();
+  // Make floating avatar measurable at its final position, but keep it invisible
+  fa.style.display = 'block';
+  fa.classList.remove('visible');
+  fa.style.visibility = 'hidden';
 
-      // Calculate differences for FLIP animation
-      const deltaX = firstRect.left - lastRect.left;
-      const deltaY = firstRect.top - lastRect.top;
-      const scaleX = firstRect.width / lastRect.width;
-      const scaleY = firstRect.height / lastRect.height;
+  // Force layout so getBoundingClientRect() is accurate
+  const lastRect = fa.getBoundingClientRect();
 
-      // Invert: Move chat box to match hero box position temporarily
-      chatRow.style.transition = 'none';
-      chatRow.style.transformOrigin = 'top left';
-      chatRow.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})`;
+  // FLIP: start at hero avatar position, end at top-left anchored avatar
+  const deltaX = firstRect.left - lastRect.left;
+  const deltaY = firstRect.top - lastRect.top;
+  const scaleX = firstRect.width / lastRect.width;
+  const scaleY = firstRect.height / lastRect.height;
 
-      // Show floating avatar
-      const fa = document.getElementById('floating-avatar');
-      fa.style.display = 'block';
+  fa.style.transition = 'none';
+  fa.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})`;
+  fa.style.visibility = 'visible';
 
-      // Play: Animate from inverted position to natural position
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          chatRow.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-          chatRow.style.transform = 'none';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      fa.classList.add('visible');
+      fa.style.transition = 'opacity 0.35s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)';
+      fa.style.transform = 'none';
+    });
+  });
 
-          fa.classList.add('visible');
-        });
-      });
-    }
+  // Keep your existing chat input FLIP if you want it
+  const heroRow = document.getElementById('send-row-hero');
+  const firstInputRect = heroRow.getBoundingClientRect();
+  const chatRow = document.getElementById('send-row');
+  const lastInputRect = chatRow.getBoundingClientRect();
 
+  const deltaInputX = firstInputRect.left - lastInputRect.left;
+  const deltaInputY = firstInputRect.top - lastInputRect.top;
+  const scaleInputX = firstInputRect.width / lastInputRect.width;
+  const scaleInputY = firstInputRect.height / lastInputRect.height;
+
+  chatRow.style.transition = 'none';
+  chatRow.style.transformOrigin = 'top left';
+  chatRow.style.transform = `translate(${deltaInputX}px, ${deltaInputY}px) scale(${scaleInputX}, ${scaleInputY})`;
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      chatRow.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+      chatRow.style.transform = 'none';
+    });
+  });
+}
     /* ── Theme ──────────────────────────────────────────────────────── */
     function toggleTheme() {
       const html = document.documentElement;
