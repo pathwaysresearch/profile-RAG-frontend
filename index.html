@@ -455,35 +455,6 @@
       /* not shown in chat mode */
     }
 
-    #chatbar-transition-clone {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--input-bg);
-      border: 1px solid var(--input-border);
-      border-radius: var(--radius);
-      padding: 8px 10px 8px 18px;
-      box-shadow: var(--shadow-big);
-    }
-
-    /* Fake input */
-    #chatbar-transition-clone .fake-input {
-      flex: 1;
-      height: 20px;
-      background: var(--bg3);
-      border-radius: 4px;
-      opacity: 0.6;
-    }
-
-    /* Fake button */
-    #chatbar-transition-clone .fake-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--amber);
-      flex-shrink: 0;
-    }
-
     /* Shared inner wrap */
     #send-row-hero,
     #send-row {
@@ -867,86 +838,61 @@ Rules:
       chatStarted = true;
 
       const app = document.getElementById('app');
+      const heroContainer = document.getElementById('hero-center');
       const heroRow = document.getElementById('send-row-hero');
       const chatRow = document.getElementById('send-row');
       const heroImg = document.getElementById('hero-img');
       const fa = document.getElementById('floating-avatar');
 
-      // Measure hero elements BEFORE layout switch
-      const heroRect = heroRow.getBoundingClientRect();
-      const avatarFirstRect = heroImg.getBoundingClientRect();
+      // 1. Measure positions BEFORE layout change
+      const heroBox = heroRow.getBoundingClientRect();
+      const heroImgBox = heroImg.getBoundingClientRect();
 
-      // Switch to chat layout
+      // 2. Change state (adds/removes classes, changes display/visibility)
       app.classList.remove('hero-mode');
 
-      // Measure final layout positions AFTER switch
-      const chatRect = chatRow.getBoundingClientRect();
-      const avatarLastRect = fa.getBoundingClientRect();
+      // 3. Measure positions AFTER layout change
+      const chatBox = chatRow.getBoundingClientRect();
 
-      // Hide the real chat row during the animation
-      chatRow.style.visibility = 'hidden';
-
-      // Create a floating clone for the chatbar animation
-      const clone = document.createElement('div');
-      clone.id = 'chatbar-transition-clone';
-
-      // Build a static version (NO real input/button behavior)
-      clone.innerHTML = `
-  <div class="fake-input"></div>
-  <div class="fake-btn"></div>
-`;
-      clone.id = 'chatbar-transition-clone';
-      clone.style.position = 'fixed';
-      clone.style.left = `${heroRect.left}px`;
-      clone.style.top = `${heroRect.top}px`;
-      clone.style.width = `${heroRect.width}px`;
-      clone.style.height = `${heroRect.height}px`;
-      clone.style.margin = '0';
-      clone.style.zIndex = '9999';
-      clone.style.pointerEvents = 'none';
-      clone.style.transformOrigin = 'top left';
-      clone.style.transition = 'none';
-      document.body.appendChild(clone);
-
-      const dx = chatRect.left - heroRect.left;
-      const dy = chatRect.top - heroRect.top;
-      const sx = chatRect.width / heroRect.width;
-      const sy = chatRect.height / heroRect.height;
-
-      // Animate the clone into the bottom dock
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          clone.style.transition = 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease';
-          clone.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
-          clone.style.opacity = '0.98';
-        });
-      });
-
-      // Reveal the real chat row after the transition
-      setTimeout(() => {
-        chatRow.style.visibility = 'visible';
-        clone.remove();
-      }, 680);
-
-      // Avatar transition: hero center -> top-left corner
+      // Ensure floating avatar is in the layout so we can measure its destination
       fa.style.display = 'block';
-      fa.style.visibility = 'hidden';
-      fa.classList.remove('visible');
+      const faBox = fa.getBoundingClientRect();
 
-      const avatarDx = avatarFirstRect.left - avatarLastRect.left;
-      const avatarDy = avatarFirstRect.top - avatarLastRect.top;
-      const avatarSx = avatarFirstRect.width / avatarLastRect.width;
-      const avatarSy = avatarFirstRect.height / avatarLastRect.height;
+      // --- Chatbar FLIP (Real Element) ---
+      // Invert: position the chatRow where the heroRow was
+      const dx = heroBox.left - chatBox.left;
+      const dy = heroBox.top - chatBox.top;
+      const sx = heroBox.width / chatBox.width;
+      const sy = heroBox.height / chatBox.height;
+
+      chatRow.style.transition = 'none';
+      chatRow.style.transformOrigin = 'top left';
+      chatRow.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
+
+      // --- Avatar FLIP (Real Element) ---
+      // Destination is top-left (fa). Calculate and apply invert transform.
+      const adx = heroImgBox.left - faBox.left;
+      const ady = heroImgBox.top - faBox.top;
+      const asx = heroImgBox.width / faBox.width;
+      const asy = heroImgBox.height / faBox.height;
 
       fa.style.transition = 'none';
-      fa.style.transform = `translate(${avatarDx}px, ${avatarDy}px) scale(${avatarSx}, ${avatarSy})`;
-      fa.style.visibility = 'visible';
+      fa.style.transformOrigin = 'top left';
+      fa.style.transform = `translate(${adx}px, ${ady}px) scale(${asx}, ${asy})`;
+      fa.style.opacity = '0';
 
+      // 4. Play: Transition to natural state (transform: none)
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          fa.style.transition = 'opacity 0.35s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)';
-          fa.classList.add('visible');
+          // Play Chatbar
+          chatRow.style.transition = 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1)';
+          chatRow.style.transform = 'none';
+
+          // Play Avatar
+          fa.style.transition = 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease';
           fa.style.transform = 'none';
+          fa.style.opacity = '1';
+          fa.classList.add('visible');
         });
       });
     }
