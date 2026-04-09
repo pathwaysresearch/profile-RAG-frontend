@@ -128,14 +128,6 @@
       color: var(--amber);
     }
 
-    #server-status {
-      font-size: 13px;
-      color: var(--text-dim);
-      display: flex;
-      margin-left: 11px;
-      align-items: center;
-    }
-
     #theme-toggle-wrap {
       margin-left: auto;
       display: flex;
@@ -617,9 +609,6 @@
     <!-- ── Header ──────────────────────────────────────────────────── -->
     <header id="header">
       <div class="logo">Prof. Bhagwan Chowdhry</div>
-      <div id="server-status">
-        <span id="server-status-text">connecting…</span>
-      </div>
 
       <div id="theme-toggle-wrap">
         <span class="theme-label" id="theme-label">Dark</span>
@@ -877,7 +866,6 @@ Rules:
 </style>
 </head>
 <body>
-
 <div class="doc-header">
   <div>
     <div class="doc-title">Prof. Bhagwan Chowdhry — AI Avatar</div>
@@ -996,21 +984,6 @@ ${turnsHtml}
       } catch {}
     })();
 
-    /* ── Stats / Status ─────────────────────────────────────────────── */
-    async function refreshStats() {
-      try {
-        const r = await fetch(`${API}/stats`);
-        if (!r.ok) { setStatus(false); return; }
-        setStatus(true);
-      } catch { setStatus(false); }
-    }
-
-    function setStatus(ok) {
-      const el = document.getElementById('server-status-text');
-      if (!el) return;
-      el.textContent = ok ? '● online' : '○ offline';
-      el.style.color = ok ? 'var(--green)' : 'var(--red)';
-    }
 
     /* ── Busy state ─────────────────────────────────────────────────── */
     function setBusy(busy) {
@@ -1202,9 +1175,6 @@ ${turnsHtml}
       setTimeout(() => el.remove(), 3500);
     }
 
-    /* ── Init ───────────────────────────────────────────────────────── */
-    refreshStats();
-    setInterval(refreshStats, 8000);
   </script>
 </body>
 </html>
